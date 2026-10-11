@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Api/" />
+  <Folder Name="/Api/DAL/">
+    <Project Path="HouseholdSupplies.Api.DAL.Common/HouseholdSupplies.Api.DAL.Common.csproj" />
+  </Folder>
+  <Folder Name="/Common/">
+    <Project Path="HouseholdSupplies.Common/HouseholdSupplies.Common.csproj" />
+  </Folder>
+</Solution>
