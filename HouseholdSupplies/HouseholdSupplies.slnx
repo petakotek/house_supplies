@@ -2,6 +2,7 @@
   <Folder Name="/Api/" />
   <Folder Name="/Api/DAL/">
     <Project Path="HouseholdSupplies.Api.DAL.Common/HouseholdSupplies.Api.DAL.Common.csproj" />
+    <Project Path="HouseholdSupplies.Api.DAL.EF/HouseholdSupplies.Api.DAL.EF.csproj" />
   </Folder>
   <Folder Name="/Common/">
     <Project Path="HouseholdSupplies.Common/HouseholdSupplies.Common.csproj" />
