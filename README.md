@@ -40,7 +40,11 @@ dotnet ef database update --context HouseholdSuppliesDbContext
 Vznikne soubor `HouseholdSupplies/household-supplies.db` s tabulkami.
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests.
+To test project run from the repository root with .NET 10:
+
+```sh
+dotnet test HouseholdSupplies/HouseholdSupplies.slnx --configuration Release
+```
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better.
