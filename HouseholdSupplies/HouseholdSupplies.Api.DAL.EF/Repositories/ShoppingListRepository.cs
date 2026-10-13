@@ -26,7 +26,7 @@ public class ShoppingListRepository : RepositoryBase<ShoppingListEntity>, IShopp
 
         if (existing is null)
         {
-            return Guid.Empty;
+            return null;
         }
 
         existing.Name = updated.Name;
