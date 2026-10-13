@@ -14,10 +14,10 @@ empty, and the backup restores that empty state after each test. The only
 connection differences are the temporary file path, explicitly enabled foreign
 keys, and disabled pooling so connections close before restoration.
 
-`SqliteDbContextFixture` creates an empty schema and a clean SQLite backup once
+`DbContextFixture` creates an empty schema and a clean SQLite backup once
 per test class. Derive your test class from `DalTestBase` and pass the fixture
 through its constructor. xUnit supplies the fixture through the inherited
-`IClassFixture<SqliteDbContextFixture>` interface.
+`IClassFixture<DbContextFixture>` interface.
 
 Use `CreateScope()` to resolve repository interfaces and the context through
 `scope.ServiceProvider.GetRequiredService<T>()`. Within a scope, repositories
@@ -29,8 +29,39 @@ updated values yourself. Fixture disposal removes the database and backup when
 the class finishes. Do not override or hide the base class's cleanup method.
 
 Tests within a class run sequentially. Different classes have separate databases
-and backups, so they can run in parallel. The schema comes from `EnsureCreated`;
-this setup does not test migrations.
+and backups, so they can run in parallel. Regular tests use `EnsureCreated`.
+`MigrationTests` removes that schema and uses the EF project's actual migrations
+in the isolated test database. The normal empty backup is still restored afterward.
+
+## Coverage in implementation order
+
+1. Database fixture and dependency injection: empty tables, repository resolution,
+   context lifetimes, and backup restoration.
+2. UserRepository: CRUD, missing records, detached and tracked updates.
+3. PlaceRepository: CRUD and persisted scalar/foreign-key values.
+4. ItemRepository: CRUD, amounts, categories, expiration dates, and optional fields.
+5. ShoppingListRepository: CRUD and scalar updates.
+6. ShoppingListItemRepository: CRUD, amounts, bought status, and parent IDs.
+7. Relationship loading: authors, places, empty/populated collections, and nested items.
+8. Missing records: empty GUID reads, updates, and deletes in populated databases.
+9. Constraints: all foreign keys, required strings, duplicate IDs, and nullable values.
+10. Delete restrictions and cascades: preserve parents and unrelated records; check
+    both repository deletion and database deletion without tracking dependents.
+11. Update edge cases: preserve related records, move foreign keys, scalar-only
+    shopping-list updates, and reject conflicting tracked instances.
+12. Migrations: empty schema creation, related data, repeated migration application,
+    and missing model changes.
+
+Every test has separate Arrange, Act, and Assert sections. `Seed(...)` persists
+test data through a separate DI scope. Assertions match records by ID rather than
+depending on database result order. Expected failures are captured in Act with
+`Record.Exception` and checked in Assert.
+
+The generic repository accepts detached updates in a fresh scope and updates to
+the instance already tracked in its scope. Attaching a second instance with the
+same ID while the original is tracked throws; this current behavior is covered.
+The shopping-list override updates only Name, Shop, and Description, preserving
+its author and entries. All repositories return null for a missing update.
 
 Example:
 
@@ -44,7 +75,7 @@ namespace HouseholdSupplies.Api.DAL.Tests;
 
 public sealed class UserRepositoryTests : DalTestBase
 {
-    public UserRepositoryTests(SqliteDbContextFixture fixture) : base(fixture)
+    public UserRepositoryTests(DbContextFixture fixture) : base(fixture)
     {
     }
 
