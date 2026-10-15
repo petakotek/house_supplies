@@ -1,9 +1,10 @@
 using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Api.DAL.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace HouseholdSupplies.Api.DAL.EF.Repositories;
 
-public class ShoppingListRepository : RepositoryBase<ShoppingListEntity>
+public class ShoppingListRepository : RepositoryBase<ShoppingListEntity>, IShoppingListRepository
 {
     public ShoppingListRepository(HouseholdSuppliesDbContext dbContext) : base(dbContext)
     {
@@ -25,7 +26,7 @@ public class ShoppingListRepository : RepositoryBase<ShoppingListEntity>
 
         if (existing is null)
         {
-            return Guid.Empty;
+            return null;
         }
 
         existing.Name = updated.Name;

@@ -1,9 +1,10 @@
 using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Api.DAL.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace HouseholdSupplies.Api.DAL.EF.Repositories;
 
-public class PlaceRepository : RepositoryBase<PlaceEntity>
+public class PlaceRepository : RepositoryBase<PlaceEntity>, IPlaceRepository
 {
     public PlaceRepository(HouseholdSuppliesDbContext dbContext) : base(dbContext)
     {
