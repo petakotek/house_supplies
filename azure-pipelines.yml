@@ -1,0 +1,43 @@
+# Runs on demand from Pipelines or a manual, optional PR build validation policy.
+# Azure Repos PR enforcement is configured in branch policies, not in this file.
+trigger: none
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  buildConfiguration: Release
+
+steps:
+- task: UseDotNet@2
+  displayName: Install .NET 10 SDK
+  inputs:
+    packageType: sdk
+    version: 10.0.x
+
+- task: DotNetCoreCLI@2
+  displayName: Restore dependencies
+  inputs:
+    command: restore
+    projects: |
+      HouseholdSupplies/*.sln
+      HouseholdSupplies/*.slnx
+
+- task: DotNetCoreCLI@2
+  displayName: Build solution
+  inputs:
+    command: build
+    projects: |
+      HouseholdSupplies/*.sln
+      HouseholdSupplies/*.slnx
+    arguments: --configuration $(buildConfiguration) --no-restore
+
+- task: DotNetCoreCLI@2
+  displayName: Run tests and publish results
+  inputs:
+    command: test
+    projects: |
+      HouseholdSupplies/*.sln
+      HouseholdSupplies/*.slnx
+    arguments: --configuration $(buildConfiguration) --no-build --no-restore
+    publishTestResults: true
