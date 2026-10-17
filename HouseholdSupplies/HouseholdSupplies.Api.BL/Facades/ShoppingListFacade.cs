@@ -22,11 +22,13 @@ public class ShoppingListFacade(IShoppingListRepository shoppingListRepository, 
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            query = query.Where(list => list.Description != null && (
-                list.Name.Contains(searchQuery) ||
-                list.Description.Contains(searchQuery) ||
-                list.Shop.Contains(searchQuery)
-                ));
+            var normalizedSearchQuery = searchQuery.ToLowerInvariant();
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            
+            query = query.Where(list =>  
+                list.Name.Contains(searchQuery, comparison) ||
+                (list.Description != null && list.Description.Contains(searchQuery, comparison)) ||
+                list.Shop.Contains(searchQuery, comparison));
         }
 
         if (authorId.HasValue)
