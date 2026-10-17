@@ -1,3 +1,4 @@
+using HouseholdSupplies.Api.BL.Mappers.Interfaces;
 using HouseholdSupplies.Api.DAL.Common.Entities;
 using HouseholdSupplies.Common.Models.Item;
 using Riok.Mapperly.Abstractions;
@@ -5,7 +6,7 @@ using Riok.Mapperly.Abstractions;
 namespace HouseholdSupplies.Api.BL.Mappers;
 
 [Mapper]
-public partial class ItemMapper
+public partial class ItemMapper : IMapper<ItemEntity, ItemListModel, ItemDetailModel>
 {
     [MapperIgnoreSource(nameof(ItemEntity.Description))]
     [MapperIgnoreSource(nameof(ItemEntity.ExpirationDate))]

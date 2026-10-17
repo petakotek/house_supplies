@@ -1,3 +1,4 @@
+using HouseholdSupplies.Api.BL.Mappers.Interfaces;
 using HouseholdSupplies.Api.DAL.Common.Entities;
 using HouseholdSupplies.Common.Models.Place;
 using Riok.Mapperly.Abstractions;
@@ -5,7 +6,7 @@ using Riok.Mapperly.Abstractions;
 namespace HouseholdSupplies.Api.BL.Mappers;
 
 [Mapper]
-public partial class PlaceMapper
+public partial class PlaceMapper : IMapper<PlaceEntity, PlaceListModel, PlaceDetailModel>
 {
     [MapperIgnoreSource(nameof(PlaceEntity.Description))]
     [MapperIgnoreSource(nameof(PlaceEntity.Author))]
