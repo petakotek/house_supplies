@@ -9,7 +9,7 @@ public record ItemEntity : EntityBase
     public required double Amount { get; set; }
     public DateTime? ExpirationDate { get; set; }
     public required Category Category { get; set; }
-    public required string Description { get; set; }
+    public string? Description { get; set; }
     
     public Guid AuthorId { get; set; }
     public  UserEntity? Author { get; set; }
