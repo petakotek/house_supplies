@@ -3,7 +3,7 @@ using HouseholdSupplies.Common.Enums;
 
 namespace HouseholdSupplies.Common.Models.Item;
 
-public record ItemDetailModel()
+public record ItemDetailModel() : IWithId
 {
     public Guid Id { get; init; }
     public required string Name { get; init; }
