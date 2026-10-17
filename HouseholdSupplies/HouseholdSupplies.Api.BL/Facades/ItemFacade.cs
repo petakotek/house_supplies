@@ -1,7 +1,9 @@
+using System.Globalization;
 using HouseholdSupplies.Api.BL.Facades.Interfaces;
 using HouseholdSupplies.Api.BL.Mappers;
 using HouseholdSupplies.Api.DAL.Common.Entities;
 using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Common;
 using HouseholdSupplies.Common.Enums;
 using HouseholdSupplies.Common.Models.Item;
 
@@ -25,12 +27,14 @@ public class ItemFacade(IItemRepository itemRepository, ItemMapper mapper)
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            query = query.Where(item => item.Author != null && item.Place != null && item.Description != null && (
-                item.Name.Contains(searchQuery) ||
-                item.Description.Contains(searchQuery) ||
-                item.Author.Name.Contains(searchQuery) ||
-                item.Place.Name.Contains(searchQuery)
-            ));
+            var normalizedSearchQuery = searchQuery.ToLowerInvariant();
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+
+            query = query.Where(item =>
+                item.Name.Contains(normalizedSearchQuery, comparison) ||
+                (item.Description != null && item.Description.Contains(normalizedSearchQuery, comparison)) ||
+                (item.Author != null && item.Author.Name.Contains(normalizedSearchQuery, comparison)) ||
+                (item.Place != null && item.Place.Name.Contains(normalizedSearchQuery, comparison)));
         }
 
         if (placeId.HasValue)
