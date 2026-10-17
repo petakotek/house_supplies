@@ -365,19 +365,14 @@ public class ItemFacadeTests
 
     private static ItemEntity CreateEntity(string name = "Milk")
     {
-        var author = new UserEntity
-        {
-            Id = Guid.NewGuid(), Name = "Alice", ImageUrl = "alice.png", Role = Role.User
-        };
+        var author = FacadeTestData.CreateUser();
         var place = new PlaceEntity
         {
             Id = Guid.NewGuid(), Name = "Pantry", AuthorId = author.Id
         };
-        return new ItemEntity
+        return FacadeTestData.CreateItem() with
         {
-            Id = Guid.NewGuid(), Name = name, ImageUrl = "milk.png", Amount = 2.5,
-            Category = Category.Food, Description = "Fresh supplies",
-            ExpirationDate = new DateTime(2027, 1, 15),
+            Name = name,
             AuthorId = author.Id, Author = author, PlaceId = place.Id, Place = place
         };
     }
