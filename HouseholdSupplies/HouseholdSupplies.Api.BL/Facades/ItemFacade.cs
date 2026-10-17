@@ -8,7 +8,7 @@ using HouseholdSupplies.Common.Models.Item;
 namespace HouseholdSupplies.Api.BL.Facades;
 
 public class ItemFacade(IItemRepository itemRepository, ItemMapper mapper)
-    : FacadeBase<IItemRepository, ItemEntity>(itemRepository), IItemFacade
+    : FacadeBase<IItemRepository, ItemEntity, ItemDetailModel, ItemListModel, ItemMapper>(itemRepository, mapper), IItemFacade
 {
     private readonly IItemRepository _itemRepository = itemRepository;
     private readonly ItemMapper _mapper = mapper;
@@ -25,12 +25,12 @@ public class ItemFacade(IItemRepository itemRepository, ItemMapper mapper)
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            query = query.Where(item => item.Author != null && item.Place != null && (
+            query = query.Where(item => item.Author != null && item.Place != null && item.Description != null && (
                 item.Name.Contains(searchQuery) ||
                 item.Description.Contains(searchQuery) ||
                 item.Author.Name.Contains(searchQuery) ||
                 item.Place.Name.Contains(searchQuery)
-                ));
+            ));
         }
 
         if (placeId.HasValue)
@@ -49,42 +49,5 @@ public class ItemFacade(IItemRepository itemRepository, ItemMapper mapper)
 
         IEnumerable<ItemEntity> entities = query.ToList();
         return _mapper.ToListModels(entities);
-    }
-
-    public ItemDetailModel? GetById(Guid id)
-    {
-        var itemEntity = _itemRepository.GetById(id);
-        if (itemEntity == null)
-        {
-            return null;
-        }
-        return _mapper.ToDetailModel(itemEntity);
-    }
-
-    public Guid CreateOrUpdate(ItemDetailModel model, IList<string> userRoles, string? ownerId = null)
-    {
-        return _itemRepository.Exists(model.Id)
-            ? Update(model, userRoles, ownerId)!.Value
-            : Create(model, userRoles, ownerId);
-    }
-
-    public Guid Create(ItemDetailModel itemModel, IList<string> userRoles, string? ownerId = null)
-    {
-        var itemEntity = _mapper.ToEntity(itemModel, ownerId);
-        return _itemRepository.Insert(itemEntity);
-    }
-
-    public Guid? Update(ItemDetailModel itemModel, IList<string> userRoles, string? ownerId = null)
-    {
-        ThrowIfWrongOwnerAndNotAdmin(itemModel.Id, userRoles, ownerId);
-
-        var itemEntity = _mapper.ToEntity(itemModel, ownerId);
-        return _itemRepository.Update(itemEntity);
-    }
-
-    public void Delete(Guid id, IList<string> userRoles, string? ownerId = null)
-    {
-        ThrowIfWrongOwnerAndNotAdmin(id, userRoles, ownerId);
-        _itemRepository.Remove(id);
     }
 }
