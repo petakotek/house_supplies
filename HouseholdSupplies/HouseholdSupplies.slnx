@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Api/" />
   <Folder Name="/Api/BL/">
+    <Project Path="HouseholdSupplies.Api.BL.Tests/HouseholdSupplies.Api.BL.Tests.csproj" />
     <Project Path="HouseholdSupplies.Api.BL/HouseholdSupplies.Api.BL.csproj" />
   </Folder>
   <Folder Name="/Api/DAL/">
