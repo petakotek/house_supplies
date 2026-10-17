@@ -59,7 +59,7 @@ public sealed class ShoppingListItemRepositoryTests : DalTestBase
         var retrieved = repository.GetAll();
 
         // Assert
-        Assert.Equal(2, retrieved.Count);
+        Assert.Equal(2, retrieved.Count());
         AssertFields(first, Assert.Single(retrieved, entity => entity.Id == first.Id));
         AssertFields(second, Assert.Single(retrieved, entity => entity.Id == second.Id));
     }
