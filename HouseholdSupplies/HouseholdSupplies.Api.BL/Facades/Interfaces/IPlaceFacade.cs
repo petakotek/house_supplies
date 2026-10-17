@@ -1,8 +1,9 @@
+using HouseholdSupplies.Common.BL;
 using HouseholdSupplies.Common.Models.Place;
 
 namespace HouseholdSupplies.Api.BL.Facades.Interfaces;
 
-public interface IPlaceFacade
+public interface IPlaceFacade : IAppFacade
 {
     IEnumerable<PlaceListModel> GetAll(
         string? searchQuery = null,

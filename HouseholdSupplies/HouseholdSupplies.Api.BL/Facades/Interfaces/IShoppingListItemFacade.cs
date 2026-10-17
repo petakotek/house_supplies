@@ -1,8 +1,9 @@
+using HouseholdSupplies.Common.BL;
 using HouseholdSupplies.Common.Models.ShoppingListItem;
 
 namespace HouseholdSupplies.Api.BL.Facades.Interfaces;
 
-public interface IShoppingListItemFacade
+public interface IShoppingListItemFacade : IAppFacade
 {
     IEnumerable<ShoppingListItemListModel> GetAll(
         bool? isBought = null);
