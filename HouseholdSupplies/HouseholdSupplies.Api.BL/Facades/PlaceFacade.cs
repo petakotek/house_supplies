@@ -23,9 +23,12 @@ public class PlaceFacade(IPlaceRepository placeRepository, PlaceMapper mapper)
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
-            query = query.Where(place => place.Description != null && (
-                place.Name.Contains(searchQuery) ||
-                place.Description.Contains(searchQuery)));
+            var normalizedSearchQuery = searchQuery.ToLowerInvariant();
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            
+            query = query.Where(place => 
+                place.Name.Contains(searchQuery, comparison) ||
+                (place.Description != null && place.Description.Contains(searchQuery)));
         }
 
         if (authorId.HasValue)
