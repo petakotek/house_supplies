@@ -17,7 +17,9 @@ public class FacadeBase<TRepository, TEntity, TDetailModel, TListModel, TMapper>
     {
         if (id is not null
             && userRoles is not null
-            && ownerId is not null)
+            && !userRoles.Contains(UserRoles.Admin)
+            && ownerId is not null
+            && repository.GetById(id.Value)?.OwnerId != ownerId)
         {
             throw new UnauthorizedAccessException();
         }
