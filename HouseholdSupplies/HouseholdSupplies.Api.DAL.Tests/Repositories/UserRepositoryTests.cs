@@ -105,7 +105,7 @@ public sealed class UserRepositoryTests : DalTestBase
         var retrievedUsers = userRepository.GetAll();
 
         // Assert
-        Assert.Equal(users.Length, retrievedUsers.Count);
+        Assert.Equal(users.Length, retrievedUsers.Count());
         foreach (var expectedUser in users)
         {
             var retrievedUser = Assert.Single(retrievedUsers,

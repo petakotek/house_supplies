@@ -46,6 +46,9 @@ namespace HouseholdSupplies.Api.DAL.EF.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("PlaceId")
                         .HasColumnType("TEXT");
 
@@ -77,6 +80,9 @@ namespace HouseholdSupplies.Api.DAL.EF.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -98,6 +104,9 @@ namespace HouseholdSupplies.Api.DAL.EF.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnerId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Shop")
@@ -126,6 +135,9 @@ namespace HouseholdSupplies.Api.DAL.EF.Migrations
                     b.Property<Guid>("ItemId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("ShoppingListId")
                         .HasColumnType("TEXT");
 
@@ -150,6 +162,9 @@ namespace HouseholdSupplies.Api.DAL.EF.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnerId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Role")

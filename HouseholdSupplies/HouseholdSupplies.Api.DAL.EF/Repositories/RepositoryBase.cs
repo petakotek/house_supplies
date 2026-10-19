@@ -12,9 +12,9 @@ public class RepositoryBase<TEntity> : IApiRepository<TEntity>, IDisposable wher
         this.dbContext = dbContext;
     }
 
-    public virtual IList<TEntity> GetAll()
+    public virtual IQueryable<TEntity> GetAll()
     {
-        return dbContext.Set<TEntity>().ToList();
+        return dbContext.Set<TEntity>();
     }
     
     public virtual TEntity? GetById(Guid id)
