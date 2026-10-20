@@ -1,5 +1,7 @@
 <Solution>
-  <Folder Name="/Api/" />
+  <Folder Name="/Api/">
+    <Project Path="HouseholdSupplies.Api.App/HouseholdSupplies.Api.App.csproj" Id="e9f0c933-0571-4f94-8553-db086bf57210" />
+  </Folder>
   <Folder Name="/Api/BL/">
     <Project Path="HouseholdSupplies.Api.BL.Tests/HouseholdSupplies.Api.BL.Tests.csproj" />
     <Project Path="HouseholdSupplies.Api.BL/HouseholdSupplies.Api.BL.csproj" />
