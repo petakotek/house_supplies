@@ -15,6 +15,7 @@ using HouseholdSupplies.Common.Models.Place;
 using HouseholdSupplies.Common.Models.ShoppingList;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -35,6 +36,7 @@ UseSecurityFeatures(app);
 UseLocalization(app);
 UseRouting(app);
 UseAuthorization(app);
+UseEndpoints(app);
 UseOpenApi(app);
 
 app.Run();
@@ -103,6 +105,16 @@ void ConfigureAuthorization(IServiceCollection serviceCollection)
 void UseAuthorization(IApplicationBuilder application)
 {
     application.UseAuthorization();
+}
+
+void UseEndpoints(WebApplication application)
+{
+    var endpointsBase = application.MapGroup("api");
+
+    var identityOptions = application.Services.GetRequiredService<IOptions<IdentityOptions>>();
+
+    endpointsBase.UsePlaceEndpoints(identityOptions);
+    endpointsBase.UseShoppingListEndpoints(identityOptions);
 }
 
 void UseDevelopmentSettings(WebApplication application)
