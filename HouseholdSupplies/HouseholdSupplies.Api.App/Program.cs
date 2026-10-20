@@ -1,14 +1,18 @@
 using System.Globalization;
+using FluentValidation;
 using HouseholdSupplies.Api.App;
 using HouseholdSupplies.Api.App.Extensions;
 using HouseholdSupplies.Api.App.Middlewares;
 using HouseholdSupplies.Api.App.Processors;
+using HouseholdSupplies.Api.App.Validators;
 using HouseholdSupplies.Api.BL.Installers;
 using HouseholdSupplies.Api.BL.Mappers;
 using HouseholdSupplies.Api.DAL.EF.Extensions;
 using HouseholdSupplies.Api.DAL.EF.Installers;
 using HouseholdSupplies.Common;
 using HouseholdSupplies.Common.Extensions;
+using HouseholdSupplies.Common.Models.Place;
+using HouseholdSupplies.Common.Models.ShoppingList;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 
@@ -21,6 +25,7 @@ ConfigureLocalization(builder.Services);
 ConfigureOpenApiDocuments(builder.Services);
 ConfigureDependencies(builder.Services, builder.Configuration);
 ConfigureMapperly(builder.Services);
+ConfigureValidators(builder.Services);
 ConfigureAuthorization(builder.Services);
 
 var app = builder.Build();
@@ -76,6 +81,12 @@ void ConfigureMapperly(IServiceCollection serviceCollection)
     serviceCollection.AddSingleton<PlaceMapper>();
     serviceCollection.AddSingleton<ShoppingListMapper>();
     serviceCollection.AddSingleton<ShoppingListItemMapper>();
+}
+
+void ConfigureValidators(IServiceCollection serviceCollection)
+{
+    serviceCollection.AddScoped<IValidator<PlaceDetailModel>, PlaceDetailModelValidator>();
+    serviceCollection.AddScoped<IValidator<ShoppingListDetailModel>, ShoppingListDetailModelValidator>();
 }
 
 void ConfigureAuthorization(IServiceCollection serviceCollection)
