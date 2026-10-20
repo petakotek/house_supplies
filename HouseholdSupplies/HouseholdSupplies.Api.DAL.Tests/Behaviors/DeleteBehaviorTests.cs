@@ -1,5 +1,5 @@
-using HouseholdSupplies.Api.DAL.Common.Repositories;
-using HouseholdSupplies.Api.DAL.EF;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
+using HouseholdSupplies.Api.DAL;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HouseholdSupplies.Api.DAL.Tests.Behaviors;

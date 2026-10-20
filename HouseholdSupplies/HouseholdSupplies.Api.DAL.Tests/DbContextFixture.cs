@@ -1,6 +1,6 @@
-using HouseholdSupplies.Api.DAL.EF;
-using HouseholdSupplies.Api.DAL.EF.Extensions;
-using HouseholdSupplies.Api.DAL.EF.Installers;
+using HouseholdSupplies.Api.DAL;
+using HouseholdSupplies.Api.DAL.Extensions;
+using HouseholdSupplies.Api.DAL.Installers;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +16,7 @@ public sealed class DbContextFixture : IDisposable
     public DbContextFixture()
     {
         var services = new ServiceCollection();
-        services.AddInstaller<ApiDALEFInstaller>(CreateConnectionString(databasePath));
+        services.AddInstaller<ApiDALInstaller>(CreateConnectionString(databasePath));
         serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateScopes = true,

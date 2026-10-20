@@ -1,4 +1,4 @@
-using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Api.DAL.Entities;
 using HouseholdSupplies.Common.Enums;
 using HouseholdSupplies.Common.Models.Item;
 using HouseholdSupplies.Common.Models.Place;

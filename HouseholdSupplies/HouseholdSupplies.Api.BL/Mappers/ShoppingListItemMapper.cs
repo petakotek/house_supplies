@@ -1,5 +1,5 @@
 using HouseholdSupplies.Api.BL.Mappers.Interfaces;
-using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Api.DAL.Entities;
 using HouseholdSupplies.Common.Models.ShoppingList;
 using HouseholdSupplies.Common.Models.ShoppingListItem;
 using Riok.Mapperly.Abstractions;

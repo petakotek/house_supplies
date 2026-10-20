@@ -7,8 +7,8 @@ using HouseholdSupplies.Api.App.Processors;
 using HouseholdSupplies.Api.App.Validators;
 using HouseholdSupplies.Api.BL.Installers;
 using HouseholdSupplies.Api.BL.Mappers;
-using HouseholdSupplies.Api.DAL.EF.Extensions;
-using HouseholdSupplies.Api.DAL.EF.Installers;
+using HouseholdSupplies.Api.DAL.Extensions;
+using HouseholdSupplies.Api.DAL.Installers;
 using HouseholdSupplies.Common;
 using HouseholdSupplies.Common.Extensions;
 using HouseholdSupplies.Common.Models.Place;
@@ -73,7 +73,7 @@ void ConfigureDependencies(IServiceCollection serviceCollection, IConfiguration 
 {
     var connectionString = configuration.GetConnectionString("DefaultConnection")
         ?? throw new ArgumentException("The connection string is missing");
-    serviceCollection.AddInstaller<ApiDALEFInstaller>(connectionString);
+    serviceCollection.AddInstaller<ApiDALInstaller>(connectionString);
     serviceCollection.AddInstaller<ApiBLInstaller>();
 }
 

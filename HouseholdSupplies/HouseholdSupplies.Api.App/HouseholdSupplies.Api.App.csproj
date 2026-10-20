@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HouseholdSupplies.Api.BL\HouseholdSupplies.Api.BL.csproj" />
-    <ProjectReference Include="..\HouseholdSupplies.Api.DAL.EF\HouseholdSupplies.Api.DAL.EF.csproj" />
+    <ProjectReference Include="..\HouseholdSupplies.Api.DAL\HouseholdSupplies.Api.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

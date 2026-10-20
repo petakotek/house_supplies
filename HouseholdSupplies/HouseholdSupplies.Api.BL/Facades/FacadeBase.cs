@@ -1,7 +1,7 @@
 using HouseholdSupplies.Api.BL.Mappers;
 using HouseholdSupplies.Api.BL.Mappers.Interfaces;
-using HouseholdSupplies.Api.DAL.Common.Entities.Interfaces;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Entities.Interfaces;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Common;
 
 namespace HouseholdSupplies.Api.BL.Facades;

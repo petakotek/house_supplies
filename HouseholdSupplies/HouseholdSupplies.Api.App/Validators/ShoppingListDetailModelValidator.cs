@@ -1,5 +1,5 @@
 using FluentValidation;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Common.Models.ShoppingList;
 
 namespace HouseholdSupplies.Api.App.Validators;

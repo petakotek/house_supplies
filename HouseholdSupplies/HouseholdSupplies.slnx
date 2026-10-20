@@ -1,14 +1,13 @@
 <Solution>
   <Folder Name="/Api/">
-    <Project Path="HouseholdSupplies.Api.App/HouseholdSupplies.Api.App.csproj" Id="e9f0c933-0571-4f94-8553-db086bf57210" />
+    <Project Path="HouseholdSupplies.Api.App/HouseholdSupplies.Api.App.csproj" />
   </Folder>
   <Folder Name="/Api/BL/">
     <Project Path="HouseholdSupplies.Api.BL.Tests/HouseholdSupplies.Api.BL.Tests.csproj" />
     <Project Path="HouseholdSupplies.Api.BL/HouseholdSupplies.Api.BL.csproj" />
   </Folder>
   <Folder Name="/Api/DAL/">
-    <Project Path="HouseholdSupplies.Api.DAL.Common/HouseholdSupplies.Api.DAL.Common.csproj" />
-    <Project Path="HouseholdSupplies.Api.DAL.EF/HouseholdSupplies.Api.DAL.EF.csproj" />
+    <Project Path="HouseholdSupplies.Api.DAL/HouseholdSupplies.Api.DAL.csproj" />
     <Project Path="HouseholdSupplies.Api.DAL.Tests\HouseholdSupplies.Api.DAL.Tests.csproj" />
   </Folder>
   <Folder Name="/Common/">
