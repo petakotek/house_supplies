@@ -1,4 +1,5 @@
-using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Common.Models.ShoppingListItem;
+using HouseholdSupplies.Common.Models.User;
 
 namespace HouseholdSupplies.Common.Models.ShoppingList;
 
@@ -8,6 +9,6 @@ public record ShoppingListDetailModel() : IWithId
     public required string Name { get; set; }
     public required string Shop { get; set; }
     public string? Description { get; set; }
-    public ICollection<ShoppingListItemEntity> Items { get; set; } = [];
-    public UserEntity? Author { get; set; }
+    public ICollection<ShoppingListItemListModel> Items { get; set; } = [];
+    public UserListModel? Author { get; set; }
 }

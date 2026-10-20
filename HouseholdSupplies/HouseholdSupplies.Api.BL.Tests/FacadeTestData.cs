@@ -1,5 +1,10 @@
 using HouseholdSupplies.Api.DAL.Common.Entities;
 using HouseholdSupplies.Common.Enums;
+using HouseholdSupplies.Common.Models.Item;
+using HouseholdSupplies.Common.Models.Place;
+using HouseholdSupplies.Common.Models.ShoppingList;
+using HouseholdSupplies.Common.Models.ShoppingListItem;
+using HouseholdSupplies.Common.Models.User;
 
 namespace HouseholdSupplies.Api.BL.Tests;
 
@@ -33,5 +38,31 @@ internal static class FacadeTestData
             ItemId = item.Id, Item = item, ShoppingListId = list.Id, ShoppingList = list
         };
     }
+
+    public static UserListModel? ToListModel(UserEntity? user) => user is null ? null : new()
+    {
+        Id = user.Id, Name = user.Name, ImageUrl = user.ImageUrl, Role = user.Role
+    };
+
+    public static PlaceListModel? ToListModel(PlaceEntity? place) => place is null ? null : new()
+    {
+        Id = place.Id, Name = place.Name, ImageUrl = place.ImageUrl
+    };
+
+    public static ItemListModel? ToListModel(ItemEntity? item) => item is null ? null : new()
+    {
+        Id = item.Id, Name = item.Name, ImageUrl = item.ImageUrl, Amount = item.Amount,
+        Category = item.Category, Place = ToListModel(item.Place)
+    };
+
+    public static ShoppingListListModel? ToListModel(ShoppingListEntity? list) => list is null ? null : new()
+    {
+        Id = list.Id, Name = list.Name, Shop = list.Shop
+    };
+
+    public static ShoppingListItemListModel? ToListModel(ShoppingListItemEntity? listItem) => listItem is null ? null : new()
+    {
+        Id = listItem.Id, Amount = listItem.Amount, IsBought = listItem.IsBought, Item = ToListModel(listItem.Item)
+    };
 }
 
