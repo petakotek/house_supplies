@@ -1,5 +1,5 @@
 using HouseholdSupplies.Api.BL.Mappers.Interfaces;
-using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Api.DAL.Entities;
 using HouseholdSupplies.Common.Models.Item;
 using Riok.Mapperly.Abstractions;
 
@@ -17,6 +17,11 @@ public partial class ItemMapper : IMapper<ItemEntity, ItemListModel, ItemDetailM
     public partial ItemListModel ToListModel(ItemEntity entity);
     [MapperIgnoreSource(nameof(ItemEntity.ShoppingListItems))]
     public partial ItemDetailModel ToDetailModel(ItemEntity entity);
+    
+    
+    [MapperIgnoreTarget(nameof(ItemEntity.Author))]
+    [MapperIgnoreTarget(nameof(ItemEntity.Place))]
+    [MapperIgnoreTarget(nameof(ItemEntity.ShoppingListItems))]
     public partial ItemEntity ToEntity(ItemDetailModel model, string? ownerId = null);
     public partial IEnumerable<ItemListModel> ToListModels(IEnumerable<ItemEntity> entities);
 }

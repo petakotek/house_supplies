@@ -66,8 +66,8 @@ its author and entries. All repositories return null for a missing update.
 Example:
 
 ```csharp
-using HouseholdSupplies.Api.DAL.Common.Entities;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Entities;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using HouseholdSupplies.Common.Enums;
 

@@ -1,7 +1,7 @@
 using HouseholdSupplies.Api.BL.Facades;
 using HouseholdSupplies.Api.BL.Mappers;
-using HouseholdSupplies.Api.DAL.Common.Entities;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Entities;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Common.Models.ShoppingList;
 using Moq;
 
@@ -78,7 +78,7 @@ public class ShoppingListFacadeTests
 
         Assert.Equal(savedId, result);
         Assert.NotNull(saved);
-        AssertDetailFields(saved, model);
+        AssertSavedEntity(model, saved);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<ShoppingListEntity>()), update ? Times.Once() : Times.Never());
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<ShoppingListEntity>()), update ? Times.Never() : Times.Once());
         repositoryMock.VerifyNoOtherCalls();
@@ -121,7 +121,7 @@ public class ShoppingListFacadeTests
 
         Assert.Equal(savedId, result);
         Assert.NotNull(saved);
-        AssertDetailFields(saved, model);
+        AssertSavedEntity(model, saved);
         repositoryMock.Verify(repository => repository.Exists(model.Id), Times.Once);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<ShoppingListEntity>()), exists ? Times.Once() : Times.Never());
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<ShoppingListEntity>()), exists ? Times.Never() : Times.Once());
@@ -313,7 +313,8 @@ public class ShoppingListFacadeTests
         return new ShoppingListDetailModel
         {
             Id = entity.Id, Name = entity.Name, Shop = entity.Shop, Description = entity.Description,
-            Author = entity.Author, Items = entity.Items
+            Author = FacadeTestData.ToListModel(entity.Author),
+            Items = entity.Items.Select(item => FacadeTestData.ToListModel(item)!).ToList()
         };
     }
 
@@ -323,8 +324,17 @@ public class ShoppingListFacadeTests
         Assert.Equal(entity.Name, model.Name);
         Assert.Equal(entity.Shop, model.Shop);
         Assert.Equal(entity.Description, model.Description);
-        Assert.Equivalent(entity.Author, model.Author, strict: true);
-        Assert.Equivalent(entity.Items, model.Items, strict: true);
+        Assert.Equivalent(FacadeTestData.ToListModel(entity.Author), model.Author, strict: true);
+        Assert.Equivalent(entity.Items.Select(item => FacadeTestData.ToListModel(item)), model.Items, strict: true);
+    }
+
+    private static void AssertSavedEntity(ShoppingListDetailModel model, ShoppingListEntity entity)
+    {
+        Assert.Equal(model.Id, entity.Id);
+        Assert.Equal(model.Name, entity.Name);
+        Assert.Equal(model.Shop, entity.Shop);
+        Assert.Equal(model.Description, entity.Description);
+        Assert.Equal(model.Author!.Id, entity.AuthorId);
     }
 }
 

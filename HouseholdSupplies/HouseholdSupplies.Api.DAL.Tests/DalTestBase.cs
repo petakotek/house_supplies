@@ -1,4 +1,4 @@
-using HouseholdSupplies.Api.DAL.EF;
+using HouseholdSupplies.Api.DAL;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HouseholdSupplies.Api.DAL.Tests;

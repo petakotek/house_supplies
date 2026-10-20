@@ -32,7 +32,7 @@ dotnet user-secrets set 'ConnectionStrings:DefaultConnection' "Data Source=house
 Pokračujte ve stejném terminálu:
 
 ```powershell
-cd .\HouseholdSupplies.Api.DAL.EF\
+cd .\HouseholdSupplies.Api.DAL\
 
 dotnet ef database update --context HouseholdSuppliesDbContext
 ```

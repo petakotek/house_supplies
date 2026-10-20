@@ -1,7 +1,7 @@
 using HouseholdSupplies.Api.BL.Facades;
 using HouseholdSupplies.Api.BL.Mappers;
-using HouseholdSupplies.Api.DAL.Common.Entities;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Entities;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Common.Models.ShoppingListItem;
 using Moq;
 
@@ -78,7 +78,7 @@ public class ShoppingListItemFacadeTests
 
         Assert.Equal(savedId, result);
         Assert.NotNull(saved);
-        AssertDetailFields(saved, model);
+        AssertSavedEntity(model, saved);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<ShoppingListItemEntity>()), update ? Times.Once() : Times.Never());
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<ShoppingListItemEntity>()), update ? Times.Never() : Times.Once());
         repositoryMock.VerifyNoOtherCalls();
@@ -121,7 +121,7 @@ public class ShoppingListItemFacadeTests
 
         Assert.Equal(savedId, result);
         Assert.NotNull(saved);
-        AssertDetailFields(saved, model);
+        AssertSavedEntity(model, saved);
         repositoryMock.Verify(repository => repository.Exists(model.Id), Times.Once);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<ShoppingListItemEntity>()), exists ? Times.Once() : Times.Never());
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<ShoppingListItemEntity>()), exists ? Times.Never() : Times.Once());
@@ -157,8 +157,7 @@ public class ShoppingListItemFacadeTests
         Assert.Equal(entity.Id, result.Id);
         Assert.Equal(entity.Amount, result.Amount);
         Assert.Equal(entity.IsBought, result.IsBought);
-        Assert.Equal(entity.ItemId, result.ItemId);
-        Assert.Equivalent(entity.Item, result.Item, strict: true);
+        Assert.Equivalent(FacadeTestData.ToListModel(entity.Item), result.Item, strict: true);
         repositoryMock.Verify(repository => repository.GetAll(), Times.Once);
         repositoryMock.VerifyNoOtherCalls();
     }
@@ -203,8 +202,8 @@ public class ShoppingListItemFacadeTests
         return new ShoppingListItemDetailModel
         {
             Id = entity.Id, Amount = entity.Amount, IsBought = entity.IsBought,
-            ItemId = entity.ItemId, Item = entity.Item,
-            ShoppingListId = entity.ShoppingListId, ShoppingList = entity.ShoppingList
+            Item = FacadeTestData.ToListModel(entity.Item),
+            ShoppingList = FacadeTestData.ToListModel(entity.ShoppingList)
         };
     }
 
@@ -213,10 +212,17 @@ public class ShoppingListItemFacadeTests
         Assert.Equal(entity.Id, model.Id);
         Assert.Equal(entity.Amount, model.Amount);
         Assert.Equal(entity.IsBought, model.IsBought);
-        Assert.Equal(entity.ItemId, model.ItemId);
-        Assert.Equal(entity.ShoppingListId, model.ShoppingListId);
-        Assert.Equivalent(entity.Item, model.Item, strict: true);
-        Assert.Equivalent(entity.ShoppingList, model.ShoppingList, strict: true);
+        Assert.Equivalent(FacadeTestData.ToListModel(entity.Item), model.Item, strict: true);
+        Assert.Equivalent(FacadeTestData.ToListModel(entity.ShoppingList), model.ShoppingList, strict: true);
+    }
+
+    private static void AssertSavedEntity(ShoppingListItemDetailModel model, ShoppingListItemEntity entity)
+    {
+        Assert.Equal(model.Id, entity.Id);
+        Assert.Equal(model.Amount, entity.Amount);
+        Assert.Equal(model.IsBought, entity.IsBought);
+        Assert.Equal(model.Item!.Id, entity.ItemId);
+        Assert.Equal(model.ShoppingList!.Id, entity.ShoppingListId);
     }
 }
 

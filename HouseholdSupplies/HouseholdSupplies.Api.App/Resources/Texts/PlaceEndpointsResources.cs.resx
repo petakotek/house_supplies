@@ -1,0 +1,23 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="GetById_NotFound" xml:space="preserve">
+        <value>Místo s id '{0}' nebylo nalezeno</value>
+    </data>
+    <data name="Upsert_Forbidden_Detail" xml:space="preserve">
+        <value>Nemáte oprávnění na přidání/editaci místa s id '{0}'</value>
+    </data>
+    <data name="Upsert_Forbidden_Title" xml:space="preserve">
+        <value>Nemáte oprávnění</value>
+    </data>
+</root>

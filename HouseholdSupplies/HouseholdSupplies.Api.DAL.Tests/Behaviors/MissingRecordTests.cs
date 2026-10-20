@@ -1,6 +1,6 @@
-using HouseholdSupplies.Api.DAL.Common.Entities;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
-using HouseholdSupplies.Api.DAL.EF;
+using HouseholdSupplies.Api.DAL.Entities;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
+using HouseholdSupplies.Api.DAL;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HouseholdSupplies.Api.DAL.Tests.Behaviors;

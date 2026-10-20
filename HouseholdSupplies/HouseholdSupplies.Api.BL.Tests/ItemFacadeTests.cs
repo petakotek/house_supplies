@@ -1,7 +1,7 @@
 ﻿using HouseholdSupplies.Api.BL.Facades;
 using HouseholdSupplies.Api.BL.Mappers;
-using HouseholdSupplies.Api.DAL.Common.Entities;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Entities;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Common.Enums;
 using HouseholdSupplies.Common.Models.Item;
 using Moq;
@@ -92,7 +92,7 @@ public class ItemFacadeTests
 
         Assert.Equal(insertedId, result);
         Assert.NotNull(inserted);
-        AssertDetailFields(inserted, model);
+        AssertSavedEntity(model, inserted);
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<ItemEntity>()), Times.Once);
         repositoryMock.VerifyNoOtherCalls();
     }
@@ -111,7 +111,7 @@ public class ItemFacadeTests
 
         Assert.Equal(updatedId, result);
         Assert.NotNull(updated);
-        AssertDetailFields(updated, model);
+        AssertSavedEntity(model, updated);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<ItemEntity>()), Times.Once);
         repositoryMock.VerifyNoOtherCalls();
     }
@@ -154,7 +154,7 @@ public class ItemFacadeTests
 
         Assert.Equal(savedId, result);
         Assert.NotNull(saved);
-        AssertDetailFields(saved, model);
+        AssertSavedEntity(model, saved);
         repositoryMock.Verify(repository => repository.Exists(model.Id), Times.Once);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<ItemEntity>()), exists ? Times.Once() : Times.Never());
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<ItemEntity>()), exists ? Times.Never() : Times.Once());
@@ -384,7 +384,7 @@ public class ItemFacadeTests
         {
             Id = entity.Id, Name = entity.Name, ImageUrl = entity.ImageUrl, Amount = entity.Amount,
             Category = entity.Category, Description = entity.Description, ExpirationDate = entity.ExpirationDate,
-            AuthorId = entity.AuthorId, Author = entity.Author, PlaceId = entity.PlaceId, Place = entity.Place
+            Author = FacadeTestData.ToListModel(entity.Author), Place = FacadeTestData.ToListModel(entity.Place)
         };
     }
 
@@ -397,11 +397,22 @@ public class ItemFacadeTests
         Assert.Equal(entity.Category, model.Category);
         Assert.Equal(entity.Description, model.Description);
         Assert.Equal(entity.ExpirationDate, model.ExpirationDate);
-        Assert.Equal(entity.AuthorId, model.AuthorId);
         Assert.Equal(entity.Author?.Id, model.Author?.Id);
         Assert.Equal(entity.Author?.Name, model.Author?.Name);
-        Assert.Equal(entity.PlaceId, model.PlaceId);
         Assert.Equal(entity.Place?.Id, model.Place?.Id);
         Assert.Equal(entity.Place?.Name, model.Place?.Name);
+    }
+
+    private static void AssertSavedEntity(ItemDetailModel model, ItemEntity entity)
+    {
+        Assert.Equal(model.Id, entity.Id);
+        Assert.Equal(model.Name, entity.Name);
+        Assert.Equal(model.ImageUrl, entity.ImageUrl);
+        Assert.Equal(model.Amount, entity.Amount);
+        Assert.Equal(model.Category, entity.Category);
+        Assert.Equal(model.Description, entity.Description);
+        Assert.Equal(model.ExpirationDate, entity.ExpirationDate);
+        Assert.Equal(model.Author!.Id, entity.AuthorId);
+        Assert.Equal(model.Place!.Id, entity.PlaceId);
     }
 }

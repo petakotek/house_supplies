@@ -1,7 +1,7 @@
 using HouseholdSupplies.Api.BL.Facades;
 using HouseholdSupplies.Api.BL.Mappers;
-using HouseholdSupplies.Api.DAL.Common.Entities;
-using HouseholdSupplies.Api.DAL.Common.Repositories;
+using HouseholdSupplies.Api.DAL.Entities;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Common.Models.Place;
 using Moq;
 
@@ -78,7 +78,7 @@ public class PlaceFacadeTests
 
         Assert.Equal(savedId, result);
         Assert.NotNull(saved);
-        AssertDetailFields(saved, model);
+        AssertSavedEntity(model, saved);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<PlaceEntity>()), update ? Times.Once() : Times.Never());
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<PlaceEntity>()), update ? Times.Never() : Times.Once());
         repositoryMock.VerifyNoOtherCalls();
@@ -121,7 +121,7 @@ public class PlaceFacadeTests
 
         Assert.Equal(savedId, result);
         Assert.NotNull(saved);
-        AssertDetailFields(saved, model);
+        AssertSavedEntity(model, saved);
         repositoryMock.Verify(repository => repository.Exists(model.Id), Times.Once);
         repositoryMock.Verify(repository => repository.Update(It.IsAny<PlaceEntity>()), exists ? Times.Once() : Times.Never());
         repositoryMock.Verify(repository => repository.Insert(It.IsAny<PlaceEntity>()), exists ? Times.Never() : Times.Once());
@@ -322,7 +322,8 @@ public class PlaceFacadeTests
         return new PlaceDetailModel
         {
             Id = entity.Id, Name = entity.Name, ImageUrl = entity.ImageUrl, Description = entity.Description,
-            Author = entity.Author, Items = entity.Items
+            Author = FacadeTestData.ToListModel(entity.Author),
+            Items = entity.Items.Select(item => FacadeTestData.ToListModel(item)!).ToList()
         };
     }
 
@@ -332,8 +333,17 @@ public class PlaceFacadeTests
         Assert.Equal(entity.Name, model.Name);
         Assert.Equal(entity.ImageUrl, model.ImageUrl);
         Assert.Equal(entity.Description, model.Description);
-        Assert.Equivalent(entity.Author, model.Author, strict: true);
-        Assert.Equivalent(entity.Items, model.Items, strict: true);
+        Assert.Equivalent(FacadeTestData.ToListModel(entity.Author), model.Author, strict: true);
+        Assert.Equivalent(entity.Items.Select(item => FacadeTestData.ToListModel(item)), model.Items, strict: true);
+    }
+
+    private static void AssertSavedEntity(PlaceDetailModel model, PlaceEntity entity)
+    {
+        Assert.Equal(model.Id, entity.Id);
+        Assert.Equal(model.Name, entity.Name);
+        Assert.Equal(model.ImageUrl, entity.ImageUrl);
+        Assert.Equal(model.Description, entity.Description);
+        Assert.Equal(model.Author!.Id, entity.AuthorId);
     }
 }
 

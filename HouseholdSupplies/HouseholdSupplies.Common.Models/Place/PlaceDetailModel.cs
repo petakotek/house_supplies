@@ -1,4 +1,5 @@
-using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Common.Models.Item;
+using HouseholdSupplies.Common.Models.User;
 
 namespace HouseholdSupplies.Common.Models.Place;
 
@@ -8,6 +9,6 @@ public record PlaceDetailModel() : IWithId
     public required string Name { get; set; }
     public string? ImageUrl { get; set; }
     public string? Description { get; set; }
-    public ICollection<ItemEntity> Items { get; set; } = [];
-    public UserEntity? Author { get; set; }
+    public ICollection<ItemListModel> Items { get; set; } = [];
+    public UserListModel? Author { get; set; }
 }

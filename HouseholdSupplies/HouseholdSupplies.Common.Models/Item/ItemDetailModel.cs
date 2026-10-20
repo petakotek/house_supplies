@@ -1,5 +1,6 @@
-using HouseholdSupplies.Api.DAL.Common.Entities;
 using HouseholdSupplies.Common.Enums;
+using HouseholdSupplies.Common.Models.Place;
+using HouseholdSupplies.Common.Models.User;
 
 namespace HouseholdSupplies.Common.Models.Item;
 
@@ -12,8 +13,7 @@ public record ItemDetailModel() : IWithId
     public DateTime? ExpirationDate { get; set; }
     public required Category Category { get; set; }
     public string? Description { get; set; }
-    public Guid AuthorId { get; set; }
-    public  UserEntity? Author { get; set; }
-    public Guid PlaceId { get; set; }
-    public PlaceEntity? Place { get; set; }
+
+    public UserListModel? Author { get; set; }
+    public PlaceListModel? Place { get; set; }
 }

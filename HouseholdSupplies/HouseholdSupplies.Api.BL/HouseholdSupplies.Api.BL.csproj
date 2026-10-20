@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HouseholdSupplies.Api.DAL.Common\HouseholdSupplies.Api.DAL.Common.csproj" />
+      <ProjectReference Include="..\HouseholdSupplies.Api.DAL\HouseholdSupplies.Api.DAL.csproj" />
       <ProjectReference Include="..\HouseholdSupplies.Common.BL\HouseholdSupplies.Common.BL.csproj" />
       <ProjectReference Include="..\HouseholdSupplies.Common.Models\HouseholdSupplies.Common.Models.csproj" />
     </ItemGroup>

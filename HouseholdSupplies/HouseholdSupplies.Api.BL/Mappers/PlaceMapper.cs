@@ -1,5 +1,5 @@
 using HouseholdSupplies.Api.BL.Mappers.Interfaces;
-using HouseholdSupplies.Api.DAL.Common.Entities;
+using HouseholdSupplies.Api.DAL.Entities;
 using HouseholdSupplies.Common.Models.Place;
 using Riok.Mapperly.Abstractions;
 
@@ -15,6 +15,8 @@ public partial class PlaceMapper : IMapper<PlaceEntity, PlaceListModel, PlaceDet
     public partial PlaceListModel ToListModel(PlaceEntity entity);
     [MapperIgnoreSource(nameof(PlaceEntity.AuthorId))]
     public partial PlaceDetailModel ToDetailModel(PlaceEntity entity);
+    [MapperIgnoreTarget(nameof(PlaceEntity.Author))]
+    [MapperIgnoreTarget(nameof(PlaceEntity.Items))]
     public partial PlaceEntity ToEntity(PlaceDetailModel model, string? ownerId = null);
     public partial IEnumerable<PlaceListModel> ToListModels(IEnumerable<PlaceEntity> entities);
 }
