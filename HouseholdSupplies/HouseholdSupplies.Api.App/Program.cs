@@ -1,5 +1,8 @@
 using System.Globalization;
 using HouseholdSupplies.Api.App;
+using HouseholdSupplies.Api.App.Extensions;
+using HouseholdSupplies.Api.App.Middlewares;
+using HouseholdSupplies.Api.App.Processors;
 using HouseholdSupplies.Api.BL.Installers;
 using HouseholdSupplies.Api.BL.Mappers;
 using HouseholdSupplies.Api.DAL.EF.Extensions;
@@ -55,7 +58,8 @@ void ConfigureLocalization(IServiceCollection serviceCollection)
 void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
 {
     serviceCollection.AddEndpointsApiExplorer();
-    serviceCollection.AddOpenApiDocument();
+    serviceCollection.AddOpenApiDocument(settings =>
+        settings.OperationProcessors.Add(new RequestCultureOperationProcessor()));
 }
 
 void ConfigureDependencies(IServiceCollection serviceCollection, IConfiguration configuration)
@@ -113,6 +117,8 @@ void UseLocalization(IApplicationBuilder application)
         DefaultRequestCulture = new RequestCulture(new CultureInfo("en")),
         SupportedCultures = [new("en"), new("cs")]
     });
+
+    application.UseRequestCulture();
 }
 
 void UseRouting(IApplicationBuilder application)
