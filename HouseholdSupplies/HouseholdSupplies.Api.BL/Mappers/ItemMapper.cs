@@ -17,6 +17,11 @@ public partial class ItemMapper : IMapper<ItemEntity, ItemListModel, ItemDetailM
     public partial ItemListModel ToListModel(ItemEntity entity);
     [MapperIgnoreSource(nameof(ItemEntity.ShoppingListItems))]
     public partial ItemDetailModel ToDetailModel(ItemEntity entity);
+    
+    
+    [MapperIgnoreTarget(nameof(ItemEntity.Author))]
+    [MapperIgnoreTarget(nameof(ItemEntity.Place))]
+    [MapperIgnoreTarget(nameof(ItemEntity.ShoppingListItems))]
     public partial ItemEntity ToEntity(ItemDetailModel model, string? ownerId = null);
     public partial IEnumerable<ItemListModel> ToListModels(IEnumerable<ItemEntity> entities);
 }
