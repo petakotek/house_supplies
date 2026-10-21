@@ -18,6 +18,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Texts\ItemEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ItemEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Texts\UserEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>UserEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Texts\EntityEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>EntityEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Texts\PlaceEndpointsResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PlaceEndpointsResources.Designer.cs</LastGenOutput>
@@ -29,6 +41,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Texts\ItemEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ItemEndpointsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Texts\UserEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UserEndpointsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Texts\EntityEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EntityEndpointsResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Texts\PlaceEndpointsResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
