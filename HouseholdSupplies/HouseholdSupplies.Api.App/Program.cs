@@ -80,6 +80,7 @@ void ConfigureDependencies(IServiceCollection serviceCollection, IConfiguration 
 void ConfigureMapperly(IServiceCollection serviceCollection)
 {
     serviceCollection.AddSingleton<ItemMapper>();
+    serviceCollection.AddSingleton<UserMapper>();
     serviceCollection.AddSingleton<PlaceMapper>();
     serviceCollection.AddSingleton<ShoppingListMapper>();
     serviceCollection.AddSingleton<ShoppingListItemMapper>();
