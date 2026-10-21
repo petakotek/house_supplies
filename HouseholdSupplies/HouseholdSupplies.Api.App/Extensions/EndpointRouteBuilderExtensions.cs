@@ -17,4 +17,9 @@ public static class EndpointRouteBuilderExtensions
         IOptions<IdentityOptions> identityOptions)
         => new ShoppingListEndpoints(identityOptions)
             .MapEndpoints(endpointRouteBuilder);
+    public static IEndpointRouteBuilder UseItemEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+        => new ItemEndpoints().MapEndpoints(endpointRouteBuilder);
+
+    public static IEndpointRouteBuilder UseUserEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+        => new UserEndpoints().MapEndpoints(endpointRouteBuilder);
 }

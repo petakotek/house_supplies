@@ -11,6 +11,8 @@ using HouseholdSupplies.Api.DAL.Extensions;
 using HouseholdSupplies.Api.DAL.Installers;
 using HouseholdSupplies.Common;
 using HouseholdSupplies.Common.Extensions;
+using HouseholdSupplies.Common.Models.Item;
+using HouseholdSupplies.Common.Models.User;
 using HouseholdSupplies.Common.Models.Place;
 using HouseholdSupplies.Common.Models.ShoppingList;
 using Microsoft.AspNetCore.Identity;
@@ -88,6 +90,8 @@ void ConfigureMapperly(IServiceCollection serviceCollection)
 
 void ConfigureValidators(IServiceCollection serviceCollection)
 {
+    serviceCollection.AddScoped<IValidator<ItemDetailModel>, ItemDetailModelValidator>();
+    serviceCollection.AddScoped<IValidator<UserListModel>, UserListModelValidator>();
     serviceCollection.AddScoped<IValidator<PlaceDetailModel>, PlaceDetailModelValidator>();
     serviceCollection.AddScoped<IValidator<ShoppingListDetailModel>, ShoppingListDetailModelValidator>();
 }
@@ -114,6 +118,8 @@ void UseEndpoints(WebApplication application)
 
     var identityOptions = application.Services.GetRequiredService<IOptions<IdentityOptions>>();
 
+    endpointsBase.UseItemEndpoints();
+    endpointsBase.UseUserEndpoints();
     endpointsBase.UsePlaceEndpoints(identityOptions);
     endpointsBase.UseShoppingListEndpoints(identityOptions);
 }
