@@ -42,6 +42,14 @@ UseAuthorization(app);
 UseEndpoints(app);
 UseOpenApi(app);
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    foreach (var url in app.Urls)
+    {
+        app.Logger.LogInformation("Swagger UI available at: {SwaggerUrl}", $"{url.TrimEnd('/')}/swagger");
+    }
+});
+
 app.Run();
 
 void ConfigureOptions(IServiceCollection serviceCollection)
