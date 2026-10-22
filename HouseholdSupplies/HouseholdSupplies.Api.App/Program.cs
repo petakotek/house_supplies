@@ -36,6 +36,7 @@ var app = builder.Build();
 UseDevelopmentSettings(app);
 UseSecurityFeatures(app);
 UseLocalization(app);
+app.UseRequestErrorResponses();
 UseRouting(app);
 UseAuthorization(app);
 UseEndpoints(app);
@@ -45,6 +46,7 @@ app.Run();
 
 void ConfigureOptions(IServiceCollection serviceCollection)
 {
+    serviceCollection.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
     serviceCollection.Configure<IdentityOptions>(builder.Configuration.GetSection(nameof(IdentityOptions)));
 }
 
@@ -68,7 +70,10 @@ void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
 {
     serviceCollection.AddEndpointsApiExplorer();
     serviceCollection.AddOpenApiDocument(settings =>
-        settings.OperationProcessors.Add(new RequestCultureOperationProcessor()));
+    {
+        settings.OperationProcessors.Add(new RequestCultureOperationProcessor());
+        settings.OperationProcessors.Add(new ResponseMetadataOperationProcessor());
+    });
 }
 
 void ConfigureDependencies(IServiceCollection serviceCollection, IConfiguration configuration)
