@@ -19,7 +19,7 @@ variables:
   azureServiceConnection: azure-api-connection
   webAppName: app-iw5-2026-team-xpollal00-api
   sqlServerName: sqldb-iw5-2026-team-xpollal00.database.windows.net
-  sqlDatabaseName: xpollal00
+  sqlDatabaseName: db-iw5-2026-team-xpollal00
 
 steps:
 - checkout: self
