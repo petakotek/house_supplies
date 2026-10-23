@@ -2,6 +2,7 @@
   <Folder Name="/Api/">
     <Project Path="HouseholdSupplies.Api.App.Tests/HouseholdSupplies.Api.App.Tests.csproj" />
     <Project Path="HouseholdSupplies.Api.App/HouseholdSupplies.Api.App.csproj" />
+    <Project Path="HouseholdSupplies.Api.App.Tests/HouseholdSupplies.Api.App.Tests.csproj" />
   </Folder>
   <Folder Name="/Api/BL/">
     <Project Path="HouseholdSupplies.Api.BL.Tests/HouseholdSupplies.Api.BL.Tests.csproj" />

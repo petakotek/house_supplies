@@ -2,7 +2,6 @@ using System.Globalization;
 using FluentValidation;
 using HouseholdSupplies.Api.App;
 using HouseholdSupplies.Api.App.Extensions;
-using HouseholdSupplies.Api.App.Middlewares;
 using HouseholdSupplies.Api.App.Processors;
 using HouseholdSupplies.Api.App.Validators;
 using HouseholdSupplies.Api.BL.Installers;
@@ -158,10 +157,9 @@ void UseLocalization(IApplicationBuilder application)
     application.UseRequestLocalization(new RequestLocalizationOptions
     {
         DefaultRequestCulture = new RequestCulture(new CultureInfo("en")),
-        SupportedCultures = [new("en"), new("cs")]
+        SupportedCultures = [new("en"), new("cs")],
+        SupportedUICultures = [new("en"), new("cs")]
     });
-
-    application.UseRequestCulture();
 }
 
 void UseRouting(IApplicationBuilder application)
