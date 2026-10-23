@@ -16,7 +16,8 @@ variables:
   migrationsProject: HouseholdSupplies/HouseholdSupplies.Api.DAL/HouseholdSupplies.Api.DAL.csproj
   migrationsStartupProject: HouseholdSupplies/HouseholdSupplies.Api.DAL/HouseholdSupplies.Api.DAL.csproj
 
-  azureServiceConnection: azure-api-connection
+  databaseServiceConnection: azure-api-connection
+  webAppServiceConnection: azure-webapp-connection
   webAppName: app-iw5-2026-team-xpollal00-api
   sqlServerName: sqldb-iw5-2026-team-xpollal00.database.windows.net
   sqlDatabaseName: db-iw5-2026-team-xpollal00
@@ -125,7 +126,7 @@ steps:
   displayName: Apply Azure SQL migrations
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   inputs:
-    azureSubscription: $(azureServiceConnection)
+    azureSubscription: $(databaseServiceConnection)
     AuthenticationType: server
     ServerName: $(sqlServerName)
     DatabaseName: $(sqlDatabaseName)
@@ -141,7 +142,7 @@ steps:
   displayName: Deploy API to Windows App Service
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   inputs:
-    azureSubscription: $(azureServiceConnection)
+    azureSubscription: $(webAppServiceConnection)
     appType: webApp
     appName: $(webAppName)
     package: $(Build.ArtifactStagingDirectory)/api.zip
