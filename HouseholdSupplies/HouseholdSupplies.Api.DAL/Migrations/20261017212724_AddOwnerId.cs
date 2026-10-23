@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,31 +13,31 @@ namespace HouseholdSupplies.Api.DAL.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "OwnerId",
                 table: "Users",
-                type: "TEXT",
+                type: "nvarchar(max)",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "OwnerId",
                 table: "ShoppingLists",
-                type: "TEXT",
+                type: "nvarchar(max)",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "OwnerId",
                 table: "ShoppingListItems",
-                type: "TEXT",
+                type: "nvarchar(max)",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "OwnerId",
                 table: "Places",
-                type: "TEXT",
+                type: "nvarchar(max)",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "OwnerId",
                 table: "Items",
-                type: "TEXT",
+                type: "nvarchar(max)",
                 nullable: true);
         }
 

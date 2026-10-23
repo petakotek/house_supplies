@@ -8,7 +8,7 @@ pool:
 
 variables:
   buildConfiguration: Release
-  efCoreVersion: '10.0.12'
+  efCoreVersion: '10.0.13'
 
   solution: HouseholdSupplies/HouseholdSupplies.slnx
   apiProject: HouseholdSupplies/HouseholdSupplies.Api.App/HouseholdSupplies.Api.App.csproj
@@ -45,6 +45,18 @@ steps:
       --configuration $(buildConfiguration)
       --no-restore
 
+- task: PowerShell@2
+  displayName: Start isolated SQL Server test instance
+  inputs:
+    targetType: inline
+    pwsh: true
+    script: |
+      $ErrorActionPreference = 'Stop'
+      sqllocaldb start MSSQLLocalDB
+      if ($LASTEXITCODE -ne 0) {
+          throw "Starting SQL Server LocalDB for integration tests failed."
+      }
+
 - task: DotNetCoreCLI@2
   displayName: Run tests
   inputs:
@@ -55,6 +67,8 @@ steps:
       --no-build
       --no-restore
     publishTestResults: true
+  env:
+    HouseholdSuppliesTests__ConnectionString: 'Server=(localdb)\MSSQLLocalDB;Database=master;Integrated Security=True;TrustServerCertificate=True'
 
 - task: DotNetCoreCLI@2
   displayName: Publish Windows API

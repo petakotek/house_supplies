@@ -1,6 +1,6 @@
 using HouseholdSupplies.Api.DAL.Entities;
 using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
-using Microsoft.Data.Sqlite;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -39,7 +39,7 @@ public sealed class DatabaseConstraintTests(DbContextFixture fixture) : DalTestB
         var exception = Record.Exception(() => context.SaveChanges());
 
         // Assert
-        AssertSqliteConstraint(exception, 787);
+        AssertSqlServerConstraint(exception, 547);
         Assert.Empty(verification.Users.ToList());
         Assert.Empty(verification.Places.ToList());
         Assert.Empty(verification.Items.ToList());
@@ -77,7 +77,7 @@ public sealed class DatabaseConstraintTests(DbContextFixture fixture) : DalTestB
         var exception = Record.Exception(() => context.SaveChanges());
 
         // Assert
-        AssertSqliteConstraint(exception, 1299);
+        AssertSqlServerConstraint(exception, 515);
     }
 
     [Theory]
@@ -118,7 +118,7 @@ public sealed class DatabaseConstraintTests(DbContextFixture fixture) : DalTestB
         var exception = Record.Exception(insert);
 
         // Assert
-        AssertSqliteConstraint(exception, 1555);
+        AssertSqlServerConstraint(exception, 2627, 2601);
         Assert.Equal(graph.User.Name, Assert.Single(context.Users.ToList()).Name);
         Assert.Equal(graph.Place.Name, Assert.Single(context.Places.ToList()).Name);
         Assert.Equal(graph.Item.Name, Assert.Single(context.Items.ToList()).Name);
@@ -159,11 +159,10 @@ public sealed class DatabaseConstraintTests(DbContextFixture fixture) : DalTestB
         Assert.Equal(graph.ShoppingList.Description, list.Description);
     }
 
-    private static void AssertSqliteConstraint(Exception? exception, int extendedCode)
+    private static void AssertSqlServerConstraint(Exception? exception, params int[] errorNumbers)
     {
         var updateException = Assert.IsType<DbUpdateException>(exception);
-        var sqliteException = Assert.IsType<SqliteException>(updateException.InnerException);
-        Assert.Equal(19, sqliteException.SqliteErrorCode);
-        Assert.Equal(extendedCode, sqliteException.SqliteExtendedErrorCode);
+        var sqlException = Assert.IsType<SqlException>(updateException.InnerException);
+        Assert.Contains(sqlException.Errors.Cast<SqlError>(), error => errorNumbers.Contains(error.Number));
     }
 }

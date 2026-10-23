@@ -1,6 +1,6 @@
 using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Api.DAL;
-using Microsoft.Data.Sqlite;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -40,10 +40,8 @@ public sealed class DeleteBehaviorTests(DbContextFixture fixture) : DalTestBase(
 
         // Assert
         var updateException = Assert.IsType<DbUpdateException>(exception);
-        var sqliteException = Assert.IsType<SqliteException>(updateException.InnerException);
-        Assert.Equal(19, sqliteException.SqliteErrorCode);
-        Assert.Equal(1811, sqliteException.SqliteExtendedErrorCode);
-        Assert.Contains("FOREIGN KEY constraint failed", sqliteException.Message);
+        var sqlException = Assert.IsType<SqlException>(updateException.InnerException);
+        Assert.Contains(sqlException.Errors.Cast<SqlError>(), error => error.Number == 547);
         Assert.True(context.Users.Any(user => user.Id == graph.User.Id));
         if (reference == "Item")
             Assert.Equal(graph.Item.Id, Assert.Single(context.Items.ToList()).Id);
@@ -68,8 +66,8 @@ public sealed class DeleteBehaviorTests(DbContextFixture fixture) : DalTestBase(
 
         // Assert
         var updateException = Assert.IsType<DbUpdateException>(exception);
-        var sqliteException = Assert.IsType<SqliteException>(updateException.InnerException);
-        Assert.Equal(19, sqliteException.SqliteErrorCode);
+        var sqlException = Assert.IsType<SqlException>(updateException.InnerException);
+        Assert.Contains(sqlException.Errors.Cast<SqlError>(), error => error.Number == 547);
         Assert.Equal(graph.Place.Id, Assert.Single(context.Places.ToList()).Id);
         Assert.Equal(graph.Item.Id, Assert.Single(context.Items.ToList()).Id);
     }

@@ -50,7 +50,7 @@ public abstract class DalTestBase : IDisposable, IClassFixture<DbContextFixture>
         }
         finally
         {
-            fixture.RestoreDatabase();
+            fixture.ResetDatabase();
         }
     }
 }

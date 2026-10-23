@@ -1,83 +1,48 @@
-using HouseholdSupplies.Api.DAL;
 using HouseholdSupplies.Api.DAL.Extensions;
 using HouseholdSupplies.Api.DAL.Installers;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using HouseholdSupplies.Api.DAL.TestInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HouseholdSupplies.Api.DAL.Tests;
 
 public sealed class DbContextFixture : IDisposable
 {
-    private readonly string databasePath = Path.Combine(
-        Path.GetTempPath(), $"household-supplies-tests-{Guid.NewGuid():N}.db");
-    private string BackupPath => databasePath + ".backup";
+    private readonly SqlServerTestDatabase database;
     private readonly ServiceProvider serviceProvider;
 
     public DbContextFixture()
     {
-        var services = new ServiceCollection();
-        services.AddInstaller<ApiDALInstaller>(CreateConnectionString(databasePath));
-        // Keep the production repositories, but replace Azure SQL with the isolated test database.
-        services.RemoveAll<DbContextOptions<HouseholdSuppliesDbContext>>();
-        services.RemoveAll<IDbContextOptionsConfiguration<HouseholdSuppliesDbContext>>();
-        services.AddDbContext<HouseholdSuppliesDbContext>(options =>
-            options.UseSqlite(CreateConnectionString(databasePath)));
-        serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+        database = new SqlServerTestDatabase();
+        try
         {
-            ValidateScopes = true,
-            ValidateOnBuild = true
-        });
-
-        using (var scope = CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<HouseholdSuppliesDbContext>();
-            dbContext.Database.EnsureCreated();
+            var services = new ServiceCollection();
+            services.AddInstaller<ApiDALInstaller>(database.ConnectionString);
+            serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true,
+                ValidateOnBuild = true
+            });
         }
-
-        using var source = OpenConnection(databasePath);
-        using var backup = OpenConnection(BackupPath);
-        source.BackupDatabase(backup);
+        catch
+        {
+            database.Dispose();
+            throw;
+        }
     }
 
     public IServiceScope CreateScope() => serviceProvider.CreateScope();
 
-    public void RestoreDatabase()
-    {
-        using var backup = OpenConnection(BackupPath);
-        using var destination = OpenConnection(databasePath);
-        backup.BackupDatabase(destination);
-    }
-
-    private static string CreateConnectionString(string path) =>
-        new SqliteConnectionStringBuilder
-        {
-            DataSource = path,
-            ForeignKeys = true,
-            Pooling = false
-        }.ToString();
-
-    private static SqliteConnection OpenConnection(string path)
-    {
-        var connection = new SqliteConnection(CreateConnectionString(path));
-        connection.Open();
-        return connection;
-    }
+    public void ResetDatabase() => database.Reset();
 
     public void Dispose()
     {
         try
         {
-            using var scope = CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<HouseholdSuppliesDbContext>();
-            dbContext.Database.EnsureDeleted();
-            File.Delete(BackupPath);
+            serviceProvider.Dispose();
         }
         finally
         {
-            serviceProvider.Dispose();
+            database.Dispose();
         }
     }
 }

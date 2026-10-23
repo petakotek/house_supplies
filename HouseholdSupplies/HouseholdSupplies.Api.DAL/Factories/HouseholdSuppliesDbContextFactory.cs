@@ -10,6 +10,7 @@ public class HouseholdSuppliesDbContextFactory : IDesignTimeDbContextFactory<Hou
     {
         var configuration = new ConfigurationBuilder()
             .AddUserSecrets<HouseholdSuppliesDbContextFactory>(optional: true)
+            .AddEnvironmentVariables()
             .Build();
 
         var optionsBuilder = new DbContextOptionsBuilder<HouseholdSuppliesDbContext>();

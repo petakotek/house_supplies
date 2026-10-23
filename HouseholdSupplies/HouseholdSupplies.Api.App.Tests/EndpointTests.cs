@@ -6,6 +6,7 @@ using HouseholdSupplies.Common.Enums;
 using HouseholdSupplies.Common.Models.Item;
 using HouseholdSupplies.Common.Models.Place;
 using HouseholdSupplies.Common.Models.User;
+using HouseholdSupplies.Api.DAL.TestInfrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -16,33 +17,46 @@ using Microsoft.AspNetCore.TestHost;
 
 namespace HouseholdSupplies.Api.App.Tests;
 
-public sealed partial class EndpointTests : IDisposable
+[Trait("Category", "Integration")]
+public sealed partial class EndpointTests : IClassFixture<SqlServerTestDatabase>, IDisposable
 {
-    private readonly string _database = Path.Combine(Path.GetTempPath(), $"household-api-{Guid.NewGuid():N}.db");
+    private readonly SqlServerTestDatabase _database;
     private readonly WebApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
     private readonly Guid _authorId = Guid.NewGuid();
     private readonly Guid _placeId = Guid.NewGuid();
     private readonly Guid _listId = Guid.NewGuid();
 
-    public EndpointTests()
+    public EndpointTests(SqlServerTestDatabase database)
     {
+        _database = database;
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
             builder.ConfigureTestServices(services =>
             {
                 services.RemoveAll<DbContextOptions<HouseholdSuppliesDbContext>>();
                 services.RemoveAll<IDbContextOptionsConfiguration<HouseholdSuppliesDbContext>>();
                 services.AddDbContext<HouseholdSuppliesDbContext>(options =>
-                    options.UseSqlite($"Data Source={_database};Pooling=False"));
+                    options.UseAzureSql(_database.ConnectionString));
             }));
-        _client = _factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
-        using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<HouseholdSuppliesDbContext>();
-        db.Database.EnsureCreated();
-        db.Users.Add(new UserEntity { Id = _authorId, Name = "Author", ImageUrl = "https://example.com/user.png", Role = Role.User });
-        db.Places.Add(new PlaceEntity { Id = _placeId, Name = "Pantry", ImageUrl = "https://example.com/place.png", AuthorId = _authorId });
-        db.ShoppingLists.Add(new ShoppingListEntity { Id = _listId, Name = "Shopping", Shop = "Shop", AuthorId = _authorId });
-        db.SaveChanges();
+        HttpClient? client = null;
+        try
+        {
+            client = _factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
+            _client = client;
+            using var scope = _factory.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<HouseholdSuppliesDbContext>();
+            db.Users.Add(new UserEntity { Id = _authorId, Name = "Author", ImageUrl = "https://example.com/user.png", Role = Role.User });
+            db.Places.Add(new PlaceEntity { Id = _placeId, Name = "Pantry", ImageUrl = "https://example.com/place.png", AuthorId = _authorId });
+            db.ShoppingLists.Add(new ShoppingListEntity { Id = _listId, Name = "Shopping", Shop = "Shop", AuthorId = _authorId });
+            db.SaveChanges();
+        }
+        catch
+        {
+            client?.Dispose();
+            _factory.Dispose();
+            _database.Reset();
+            throw;
+        }
     }
 
     [Fact]
@@ -94,7 +108,7 @@ public sealed partial class EndpointTests : IDisposable
     }
 
     [Fact]
-    public async Task ItemList_SearchesDescription_FiltersSortsAndPagesInSqlite()
+    public async Task ItemList_SearchesDescription_FiltersSortsAndPagesInSqlServer()
     {
         foreach (var name in new[] { "Apple", "Banana", "Carrot" })
             (await _client.PostAsJsonAsync("/api/item", Item(name) with { Description = "Shared description" })).EnsureSuccessStatusCode();
@@ -166,8 +180,14 @@ public sealed partial class EndpointTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
-        File.Delete(_database);
+        try
+        {
+            _client.Dispose();
+            _factory.Dispose();
+        }
+        finally
+        {
+            _database.Reset();
+        }
     }
 }

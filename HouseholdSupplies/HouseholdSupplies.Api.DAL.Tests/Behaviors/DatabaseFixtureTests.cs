@@ -53,12 +53,12 @@ public sealed class DatabaseFixtureTests : DalTestBase
         using var context = CreateDbContext();
 
         // Act
-        var isSqlite = context.Database.IsSqlite();
+        var isSqlServer = context.Database.IsSqlServer();
         var counts = new[] { context.Users.Count(), context.Places.Count(), context.Items.Count(),
             context.ShoppingLists.Count(), context.ShoppingListItems.Count() };
 
         // Assert
-        Assert.True(isSqlite);
+        Assert.True(isSqlServer);
         Assert.All(counts, count => Assert.Equal(0, count));
     }
 
@@ -84,7 +84,7 @@ public sealed class DatabaseFixtureTests : DalTestBase
 
     [Fact]
     [Trait("Category", "Integration")]
-    public void TestCleanup_Restores_Database_From_Backup()
+    public void TestCleanup_Removes_All_Test_Data()
     {
         // Arrange
         using var scope = new TestScope(fixture);

@@ -1,42 +1,59 @@
 # Writing DAL integration tests
 
-The test database is a real SQLite database stored in a unique temporary file.
-It uses the same EF Core provider as the DAL, without accessing your application
-database or user secrets.
+All DAL and API integration tests use the production Azure SQL EF provider and
+production migrations. There is one shared schema and migration history to maintain.
+No application database or developer user secrets are used by tests.
 
-The fixture calls the EF project's `ApiDALEFInstaller` to register the context,
-repositories, and mappers in a dependency injection container. It resolves
-`HouseholdSuppliesDbContext` from that container. Its
-`OnModelCreating` applies all configurations from that project's assembly, so
-tables, required fields, relationships, and delete rules use the same model as
-the application. There is no separate test model. All five entity tables start
-empty, and the backup restores that empty state after each test. The only
-connection differences are the temporary file path, explicitly enabled foreign
-keys, and disabled pooling so connections close before restoration.
+## Configure a test server
 
-`DbContextFixture` creates an empty schema and a clean SQLite backup once
-per test class. Derive your test class from `DalTestBase` and pass the fixture
-through its constructor. xUnit supplies the fixture through the inherited
-`IClassFixture<DbContextFixture>` interface.
+Set `HouseholdSuppliesTests__ConnectionString` to a **dedicated test server** connection.
+The login needs permission to create and drop databases. This can be an Azure SQL
+logical test server, SQL Server Developer Edition, or Windows SQL Server LocalDB.
+Tests never fall back to the application's connection string.
 
-Use `CreateScope()` to resolve repository interfaces and the context through
-`scope.ServiceProvider.GetRequiredService<T>()`. Within a scope, repositories
-share the same context. `CreateDbContext()` is also available as a shortcut that
-resolves a context in a new scope. After every test, including a failed assertion,
-the base class disposes all scopes and their services and restores
-the database from the backup. You do not need to remove inserted rows or reset
-updated values yourself. Fixture disposal removes the database and backup when
-the class finishes. Do not override or hide the base class's cleanup method.
+PowerShell (Windows LocalDB):
 
-Tests within a class run sequentially. Different classes have separate databases
-and backups, so they can run in parallel. Regular tests use `EnsureCreated`.
-`MigrationTests` removes that schema and uses the EF project's actual migrations
-in the isolated test database. The normal empty backup is still restored afterward.
+```powershell
+sqllocaldb start MSSQLLocalDB
+$env:HouseholdSuppliesTests__ConnectionString = 'Server=(localdb)\MSSQLLocalDB;Database=master;Integrated Security=True;TrustServerCertificate=True'
+dotnet test HouseholdSupplies/HouseholdSupplies.slnx --configuration Release
+```
+
+For Azure SQL, supply your test server connection through the same environment
+variable using your secret manager or shell. Keep credentials out of source control.
+Allow the test runner through the test server firewall. On macOS/Linux, use an
+accessible SQL Server or Azure SQL test server. The pipeline starts LocalDB on its
+Windows agent and sets this variable for the test step.
+
+## Isolation and lifecycle
+
+The shared `SqlServerTestDatabase` helper in `HouseholdSupplies.Api.DAL/TestInfrastructure`
+is referenced by both test projects through the DAL assembly. It replaces the supplied catalog with a
+unique `HouseholdSuppliesTests_<guid>` database, applies `Database.Migrate()`, and
+drops only that database after the fixture finishes. Azure SQL runs can therefore
+create several temporary databases and incur charges. A failed migration triggers
+best-effort database cleanup; if a test process is forcibly terminated, remove its
+leftover test databases manually.
+
+`DbContextFixture` registers the real `ApiDALInstaller`, repositories, and mappers
+with the isolated connection. Derive DAL test classes from `DalTestBase` and accept
+`DbContextFixture` in the constructor; xUnit provides one fixture per class.
+`CreateScope()` and `CreateDbContext()` resolve production services. After each test,
+including a failed assertion, the base class disposes its scopes and the fixture
+restores the current migration version and deletes rows in foreign-key order.
+Do not override or hide the base class cleanup method. Tests in a class run
+sequentially; different classes use different databases and can run in parallel.
+
+API endpoint tests use the same helper through an xUnit class fixture, dispose the
+HTTP client/application host, and clear their database between tests. Migration
+tests exercise the production migration chain, including fresh creation, upgrades
+preserving existing data, rollback, repeated application, and model consistency.
+Offline SQL script and design-time configuration tests do not require a server.
 
 ## Coverage in implementation order
 
 1. Database fixture and dependency injection: empty tables, repository resolution,
-   context lifetimes, and backup restoration.
+   context lifetimes, and database reset.
 2. UserRepository: CRUD, missing records, detached and tracked updates.
 3. PlaceRepository: CRUD and persisted scalar/foreign-key values.
 4. ItemRepository: CRUD, amounts, categories, expiration dates, and optional fields.
@@ -119,3 +136,12 @@ Only integration tests:
 ```sh
 dotnet test HouseholdSupplies/HouseholdSupplies.slnx --configuration Release --filter "Category=Integration"
 ```
+
+Run only tests that do not require a database server:
+
+```sh
+dotnet test HouseholdSupplies/HouseholdSupplies.slnx --configuration Release --filter "Category!=Integration"
+```
+
+Integration tests fail with a configuration message if the dedicated connection
+variable is missing; they are not silently skipped.

@@ -1,4 +1,4 @@
-using Microsoft.Data.Sqlite;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using HouseholdSupplies.Api.App.Resources.Texts;
 
@@ -12,7 +12,7 @@ public class PersistenceExceptionFilter : IEndpointFilter
         {
             return await next(context);
         }
-        catch (DbUpdateException exception) when (exception.InnerException is SqliteException { SqliteErrorCode: 19 })
+        catch (DbUpdateException exception) when (exception.InnerException is SqlException { Number: 547 or 2601 or 2627 or 515 })
         {
             return Results.Problem(statusCode: StatusCodes.Status409Conflict,
                 title: EntityEndpointsResources.Conflict_Title, detail: EntityEndpointsResources.Conflict_Detail);

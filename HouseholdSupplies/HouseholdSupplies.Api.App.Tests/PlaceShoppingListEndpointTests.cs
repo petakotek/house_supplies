@@ -59,7 +59,7 @@ public sealed partial class EndpointTests
     }
 
     [Fact]
-    public async Task PlaceList_SearchesDescription_FiltersSortsAndPagesInSqlite()
+    public async Task PlaceList_SearchesDescription_FiltersSortsAndPagesInSqlServer()
     {
         foreach (var name in new[] { "Attic", "Basement", "Cellar" })
             (await _client.PostAsJsonAsync("/api/place", Place(name) with { Description = "Shared description" })).EnsureSuccessStatusCode();
@@ -70,7 +70,7 @@ public sealed partial class EndpointTests
     }
 
     [Fact]
-    public async Task ShoppingListList_SearchesShop_FiltersSortsAndPagesInSqlite()
+    public async Task ShoppingListList_SearchesShop_FiltersSortsAndPagesInSqlServer()
     {
         foreach (var name in new[] { "Breakfast", "Dinner", "Lunch" })
             (await _client.PostAsJsonAsync("/api/shopping-list", ShoppingList(name) with { Shop = "Corner Market" })).EnsureSuccessStatusCode();
