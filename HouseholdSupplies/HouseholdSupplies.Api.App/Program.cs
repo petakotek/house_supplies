@@ -11,6 +11,8 @@ using HouseholdSupplies.Api.DAL.Extensions;
 using HouseholdSupplies.Api.DAL.Installers;
 using HouseholdSupplies.Common;
 using HouseholdSupplies.Common.Extensions;
+using HouseholdSupplies.Common.Models.Item;
+using HouseholdSupplies.Common.Models.User;
 using HouseholdSupplies.Common.Models.Place;
 using HouseholdSupplies.Common.Models.ShoppingList;
 using Microsoft.AspNetCore.Identity;
@@ -34,15 +36,25 @@ var app = builder.Build();
 UseDevelopmentSettings(app);
 UseSecurityFeatures(app);
 UseLocalization(app);
+app.UseRequestErrorResponses();
 UseRouting(app);
 UseAuthorization(app);
 UseEndpoints(app);
 UseOpenApi(app);
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    foreach (var url in app.Urls)
+    {
+        app.Logger.LogInformation("Swagger UI available at: {SwaggerUrl}", $"{url.TrimEnd('/')}/swagger");
+    }
+});
+
 app.Run();
 
 void ConfigureOptions(IServiceCollection serviceCollection)
 {
+    serviceCollection.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
     serviceCollection.Configure<IdentityOptions>(builder.Configuration.GetSection(nameof(IdentityOptions)));
 }
 
@@ -66,7 +78,10 @@ void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
 {
     serviceCollection.AddEndpointsApiExplorer();
     serviceCollection.AddOpenApiDocument(settings =>
-        settings.OperationProcessors.Add(new RequestCultureOperationProcessor()));
+    {
+        settings.OperationProcessors.Add(new RequestCultureOperationProcessor());
+        settings.OperationProcessors.Add(new ResponseMetadataOperationProcessor());
+    });
 }
 
 void ConfigureDependencies(IServiceCollection serviceCollection, IConfiguration configuration)
@@ -80,6 +95,7 @@ void ConfigureDependencies(IServiceCollection serviceCollection, IConfiguration 
 void ConfigureMapperly(IServiceCollection serviceCollection)
 {
     serviceCollection.AddSingleton<ItemMapper>();
+    serviceCollection.AddSingleton<UserMapper>();
     serviceCollection.AddSingleton<PlaceMapper>();
     serviceCollection.AddSingleton<ShoppingListMapper>();
     serviceCollection.AddSingleton<ShoppingListItemMapper>();
@@ -87,6 +103,8 @@ void ConfigureMapperly(IServiceCollection serviceCollection)
 
 void ConfigureValidators(IServiceCollection serviceCollection)
 {
+    serviceCollection.AddScoped<IValidator<ItemDetailModel>, ItemDetailModelValidator>();
+    serviceCollection.AddScoped<IValidator<UserListModel>, UserListModelValidator>();
     serviceCollection.AddScoped<IValidator<PlaceDetailModel>, PlaceDetailModelValidator>();
     serviceCollection.AddScoped<IValidator<ShoppingListDetailModel>, ShoppingListDetailModelValidator>();
 }
@@ -113,6 +131,8 @@ void UseEndpoints(WebApplication application)
 
     var identityOptions = application.Services.GetRequiredService<IOptions<IdentityOptions>>();
 
+    endpointsBase.UseItemEndpoints();
+    endpointsBase.UseUserEndpoints();
     endpointsBase.UsePlaceEndpoints(identityOptions);
     endpointsBase.UseShoppingListEndpoints(identityOptions);
 }

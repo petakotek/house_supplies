@@ -1,4 +1,3 @@
-using System.Globalization;
 using HouseholdSupplies.Api.BL.Facades.Interfaces;
 using HouseholdSupplies.Api.BL.Mappers;
 using HouseholdSupplies.Api.DAL.Entities;
@@ -6,6 +5,7 @@ using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
 using HouseholdSupplies.Common;
 using HouseholdSupplies.Common.Enums;
 using HouseholdSupplies.Common.Models.Item;
+using Microsoft.EntityFrameworkCore;
 
 namespace HouseholdSupplies.Api.BL.Facades;
 
@@ -23,18 +23,17 @@ public class ItemFacade(IItemRepository itemRepository, ItemMapper mapper)
         int page = 1,
         int pageSize = 25)
     {
-        IQueryable<ItemEntity> query = _itemRepository.GetAll();
+        IQueryable<ItemEntity> query = _itemRepository.GetAll().Include(item => item.Place);
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
             var normalizedSearchQuery = searchQuery.ToLowerInvariant();
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
 
             query = query.Where(item =>
-                item.Name.Contains(normalizedSearchQuery, comparison) ||
-                (item.Description != null && item.Description.Contains(normalizedSearchQuery, comparison)) ||
-                (item.Author != null && item.Author.Name.Contains(normalizedSearchQuery, comparison)) ||
-                (item.Place != null && item.Place.Name.Contains(normalizedSearchQuery, comparison)));
+                item.Name.ToLower().Contains(normalizedSearchQuery) ||
+                (item.Description != null && item.Description.ToLower().Contains(normalizedSearchQuery)) ||
+                (item.Author != null && item.Author.Name.ToLower().Contains(normalizedSearchQuery)) ||
+                (item.Place != null && item.Place.Name.ToLower().Contains(normalizedSearchQuery)));
         }
 
         if (placeId.HasValue)
@@ -47,7 +46,8 @@ public class ItemFacade(IItemRepository itemRepository, ItemMapper mapper)
             query = query.Where(item => item.Category == (Category)categoryId);
         }
 
-        query = ascending ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name);
+        var orderedQuery = ascending ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name);
+        query = orderedQuery.ThenBy(item => item.Id);
 
         query = query.Skip((page - 1) * pageSize).Take(pageSize);
 

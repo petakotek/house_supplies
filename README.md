@@ -46,6 +46,20 @@ To test project run from the repository root with .NET 10:
 dotnet test HouseholdSupplies/HouseholdSupplies.slnx --configuration Release
 ```
 
+# Item a User API
+
+| Metoda | Cesta | Operace |
+| --- | --- | --- |
+| GET | `/api/item`, `/api/user` | Seznam |
+| GET | `/api/item/{id}`, `/api/user/{id}` | Detail |
+| POST | `/api/item`, `/api/user` | Vytvoření (API vygeneruje ID, response obsahuje GUID) |
+| PUT | `/api/item`, `/api/user` | Úprava (ID v těle požadavku) |
+| DELETE | `/api/item/{id}`, `/api/user/{id}` | Smazání |
+| POST | `/api/item/save` | Vytvoření nebo úprava položky |
+| POST | `/api/item/{id}/shopping-list/{shoppingListId}` | Přidání položky do libovolného nákupního seznamu; tělo `{"amount": 2}` |
+
+Oba seznamy přijímají `searchQuery`, `ascending` (výchozí `true`), `page` (od 1) a `pageSize` (výchozí 25). Položky lze filtrovat přes `placeId` a `categoryName`, uživatele přes `role` (`Admin`, `User` nebo číselná hodnota). Řazení je podle jména/názvu a následně ID.
+
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better.
 
