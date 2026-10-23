@@ -31,7 +31,8 @@ public sealed partial class EndpointTests : IClassFixture<SqlServerTestDatabase>
     {
         _database = database;
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
-            builder.ConfigureTestServices(services =>
+            builder.UseSetting("ConnectionStrings:DefaultConnection", _database.ConnectionString)
+            .ConfigureTestServices(services =>
             {
                 services.RemoveAll<DbContextOptions<HouseholdSuppliesDbContext>>();
                 services.RemoveAll<IDbContextOptionsConfiguration<HouseholdSuppliesDbContext>>();

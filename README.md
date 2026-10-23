@@ -19,14 +19,17 @@ dotnet tool install --global dotnet-ef --version 10.0.13
 
 ### 2. Nastavení vlastního připojení přes User Secrets
 
-Nastavte připojení k vlastní vývojové databázi SQL Server / Azure SQL pro DAL (migrační nástroj). API přijímá připojení přes proměnnou prostředí:
+Nastavte připojení k vlastní vývojové databázi SQL Server / Azure SQL. API v prostředí `Development` i DAL (migrační nástroj) sdílejí existující User Secrets:
 
 ```powershell
 dotnet user-secrets set 'ConnectionStrings:DefaultConnection' '<SQL Server connection string>' --project .\HouseholdSupplies\HouseholdSupplies.Api.DAL\HouseholdSupplies.Api.DAL.csproj
-$env:ConnectionStrings__DefaultConnection = '<SQL Server connection string>'
 ```
 
 **Nespouštějte znovu** `user-secrets init`. Existující identifikátory secrets se nemění. Přihlašovací údaje nepatří do repozitáře. Migrační nástroj také přijímá proměnnou `ConnectionStrings__DefaultConnection`, která má přednost před User Secrets.
+
+Nasazená aplikace User Secrets nenačítá. V Azure Portal otevřete App Service → Settings → Environment variables → Connection strings a nastavte `DefaultConnection` (typ `SQLAzure`) na připojení k databázi aplikace. Alternativně nastavte app setting `ConnectionStrings__DefaultConnection`. Změny uložte a aplikaci restartujte. Připojení použité pipeline pro migrace se do běžící aplikace automaticky nepřenáší.
+
+Prázdné hodnoty v `appsettings.json` a `appsettings.Development.json` jsou pouze zástupné. Pokud připojení chybí nebo obsahuje jen mezery, API při startu vypíše chybu konfigurace místo HTTP 500 při prvním databázovém požadavku.
 
 ### 3. Aktualizace vlastní vývojové databáze
 

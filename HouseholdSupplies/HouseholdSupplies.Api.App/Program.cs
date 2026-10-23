@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 
-var builder = WebApplication.CreateBuilder();
+var builder = WebApplication.CreateBuilder(args);
 
 ConfigureOptions(builder.Services);
 ConfigureCors(builder.Services);
@@ -85,8 +85,13 @@ void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
 
 void ConfigureDependencies(IServiceCollection serviceCollection, IConfiguration configuration)
 {
-    var connectionString = configuration.GetConnectionString("DefaultConnection")
-        ?? throw new ArgumentException("The connection string is missing");
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        throw new InvalidOperationException(
+            "ConnectionStrings:DefaultConnection must be configured with a non-empty SQL Server connection string. " +
+            "Use user secrets in Development or the ConnectionStrings__DefaultConnection environment variable in the deployed service.");
+    }
     serviceCollection.AddInstaller<ApiDALInstaller>(connectionString);
     serviceCollection.AddInstaller<ApiBLInstaller>();
 }

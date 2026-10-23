@@ -24,7 +24,9 @@ public sealed class RequestCultureTests
     public async Task RequestCulture_SelectsSupportedCultureOrDefault(string query, string expectedCulture)
     {
         using var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
-            builder.ConfigureTestServices(services =>
+            builder.UseSetting("ConnectionStrings:DefaultConnection",
+                "Server=localhost;Database=CultureTests;Integrated Security=True;TrustServerCertificate=True")
+            .ConfigureTestServices(services =>
                 services.AddTransient<IStartupFilter, CultureProbeStartupFilter>()));
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
