@@ -12,7 +12,7 @@ public class ShoppingListDetailModelValidator : AbstractValidator<ShoppingListDe
         RuleFor(shoppingList => shoppingList.Shop).NotEmpty();
         RuleFor(shoppingList => shoppingList.Author).NotNull();
         RuleFor(shoppingList => shoppingList.Author!.Id)
-            .Must(userRepository.Exists)
+            .Must(userRepository.Exists).WithErrorCode("ReferenceNotFound")
             .When(shoppingList => shoppingList.Author is not null)
             .WithMessage("Author with id '{PropertyValue}' does not exist.");
     }
