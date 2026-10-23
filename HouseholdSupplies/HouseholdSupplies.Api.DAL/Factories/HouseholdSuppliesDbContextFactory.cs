@@ -13,7 +13,7 @@ public class HouseholdSuppliesDbContextFactory : IDesignTimeDbContextFactory<Hou
             .Build();
 
         var optionsBuilder = new DbContextOptionsBuilder<HouseholdSuppliesDbContext>();
-        optionsBuilder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+        optionsBuilder.UseAzureSql(configuration.GetConnectionString("DefaultConnection"));
         return new HouseholdSuppliesDbContext(optionsBuilder.Options);
     }
 }
