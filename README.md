@@ -46,19 +46,19 @@ To test project run from the repository root with .NET 10:
 dotnet test HouseholdSupplies/HouseholdSupplies.slnx --configuration Release
 ```
 
-# Item a User API
+# REST API
 
 | Metoda | Cesta | Operace |
 | --- | --- | --- |
-| GET | `/api/item`, `/api/user` | Seznam |
-| GET | `/api/item/{id}`, `/api/user/{id}` | Detail |
-| POST | `/api/item`, `/api/user` | Vytvoření (API vygeneruje ID, response obsahuje GUID) |
-| PUT | `/api/item`, `/api/user` | Úprava (ID v těle požadavku) |
-| DELETE | `/api/item/{id}`, `/api/user/{id}` | Smazání |
-| POST | `/api/item/save` | Vytvoření nebo úprava položky |
+| GET | `/api/item`, `/api/user`, `/api/place`, `/api/shopping-list` | Seznam |
+| GET | `/api/item/{id}`, `/api/user/{id}`, `/api/place/{id}`, `/api/shopping-list/{id}` | Detail |
+| POST | `/api/item`, `/api/user`, `/api/place`, `/api/shopping-list` | Vytvoření (API vygeneruje ID, response obsahuje GUID) |
+| PUT | `/api/item`, `/api/user`, `/api/place`, `/api/shopping-list` | Úprava (ID v těle požadavku) |
+| DELETE | `/api/item/{id}`, `/api/user/{id}`, `/api/place/{id}`, `/api/shopping-list/{id}` | Smazání |
+| POST | `/api/item/save`, `/api/place/save`, `/api/shopping-list/save` | Vytvoření nebo úprava záznamu |
 | POST | `/api/item/{id}/shopping-list/{shoppingListId}` | Přidání položky do libovolného nákupního seznamu; tělo `{"amount": 2}` |
 
-Oba seznamy přijímají `searchQuery`, `ascending` (výchozí `true`), `page` (od 1) a `pageSize` (výchozí 25). Položky lze filtrovat přes `placeId` a `categoryName`, uživatele přes `role` (`Admin`, `User` nebo číselná hodnota). Řazení je podle jména/názvu a následně ID.
+Všechny seznamy přijímají `searchQuery`, `ascending` (výchozí `true`), `page` (od 1) a `pageSize` (výchozí 25). Položky lze filtrovat přes `placeId` a `categoryName`, uživatele přes `role` (`Admin`, `User` nebo číselná hodnota), místa a nákupní seznamy přes `authorId`. Řazení je podle jména/názvu a následně ID.
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better.

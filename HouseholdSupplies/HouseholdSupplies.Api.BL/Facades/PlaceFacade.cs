@@ -24,11 +24,10 @@ public class PlaceFacade(IPlaceRepository placeRepository, PlaceMapper mapper)
         if (!string.IsNullOrEmpty(searchQuery))
         {
             var normalizedSearchQuery = searchQuery.ToLowerInvariant();
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
-            
-            query = query.Where(place => 
-                place.Name.Contains(searchQuery, comparison) ||
-                (place.Description != null && place.Description.Contains(searchQuery)));
+
+            query = query.Where(place =>
+                place.Name.ToLower().Contains(normalizedSearchQuery) ||
+                (place.Description != null && place.Description.ToLower().Contains(normalizedSearchQuery)));
         }
 
         if (authorId.HasValue)
@@ -36,7 +35,8 @@ public class PlaceFacade(IPlaceRepository placeRepository, PlaceMapper mapper)
             query = query.Where(place => place.AuthorId == authorId.Value);
         }
 
-        query = ascending ? query.OrderBy(place => place.Name) : query.OrderByDescending(place => place.Name);
+        var orderedQuery = ascending ? query.OrderBy(place => place.Name) : query.OrderByDescending(place => place.Name);
+        query = orderedQuery.ThenBy(place => place.Id);
 
         query = query.Skip((page - 1) * pageSize).Take(pageSize);
 

@@ -45,7 +45,8 @@ public class RepositoryBase<TEntity> : IApiRepository<TEntity>, IDisposable wher
 
     public virtual void Remove(Guid id)
     {
-        var entity = GetById(id);
+        dbContext.ChangeTracker.Clear();
+        var entity = dbContext.Set<TEntity>().SingleOrDefault(entity => entity.Id == id);
         if (entity is not null)
         {
             dbContext.Set<TEntity>().Remove(entity);

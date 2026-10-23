@@ -68,7 +68,7 @@ public sealed class RelationshipLoadingTests(DbContextFixture fixture) : DalTest
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void ShoppingList_GetById_Loads_Author_Entries_And_Their_Items(bool hasEntries)
+    public void ShoppingList_GetById_Loads_Author_Entries_Their_Items_And_Places(bool hasEntries)
     {
         // Arrange
         var graph = new TestDataGraph();
@@ -96,6 +96,8 @@ public sealed class RelationshipLoadingTests(DbContextFixture fixture) : DalTest
             Assert.NotNull(entry.Item);
             Assert.Equal(graph.Item.Id, entry.Item.Id);
             Assert.Equal(graph.Item.Name, entry.Item.Name);
+            Assert.NotNull(entry.Item.Place);
+            Assert.Equal(graph.Place.Id, entry.Item.Place.Id);
         }
         else
         {

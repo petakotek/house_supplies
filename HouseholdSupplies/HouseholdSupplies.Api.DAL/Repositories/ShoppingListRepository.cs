@@ -16,6 +16,7 @@ public class ShoppingListRepository : RepositoryBase<ShoppingListEntity>, IShopp
             .Include(list => list.Author)
             .Include(list => list.Items)
             .ThenInclude(entry => entry.Item)
+            .ThenInclude(item => item!.Place)
             .SingleOrDefault(list => list.Id == id);
     }
     

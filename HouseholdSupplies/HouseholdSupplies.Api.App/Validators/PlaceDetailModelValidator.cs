@@ -11,7 +11,7 @@ public class PlaceDetailModelValidator : AbstractValidator<PlaceDetailModel>
         RuleFor(place => place.Name).NotEmpty();
         RuleFor(place => place.Author).NotNull();
         RuleFor(place => place.Author!.Id)
-            .Must(userRepository.Exists)
+            .Must(userRepository.Exists).WithErrorCode("ReferenceNotFound")
             .When(place => place.Author is not null)
             .WithMessage("Author with id '{PropertyValue}' does not exist.");
     }
