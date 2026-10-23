@@ -2,7 +2,10 @@ using HouseholdSupplies.Api.DAL;
 using HouseholdSupplies.Api.DAL.Extensions;
 using HouseholdSupplies.Api.DAL.Installers;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HouseholdSupplies.Api.DAL.Tests;
 
@@ -17,6 +20,11 @@ public sealed class DbContextFixture : IDisposable
     {
         var services = new ServiceCollection();
         services.AddInstaller<ApiDALInstaller>(CreateConnectionString(databasePath));
+        // Keep the production repositories, but replace Azure SQL with the isolated test database.
+        services.RemoveAll<DbContextOptions<HouseholdSuppliesDbContext>>();
+        services.RemoveAll<IDbContextOptionsConfiguration<HouseholdSuppliesDbContext>>();
+        services.AddDbContext<HouseholdSuppliesDbContext>(options =>
+            options.UseSqlite(CreateConnectionString(databasePath)));
         serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateScopes = true,
