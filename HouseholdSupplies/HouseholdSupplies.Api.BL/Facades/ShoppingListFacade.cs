@@ -15,20 +15,20 @@ public class ShoppingListFacade(IShoppingListRepository shoppingListRepository, 
     public IEnumerable<ShoppingListListModel> GetAll(
         string? searchQuery = null,
         bool ascending = true,
-        Guid? authorId = null
-        )
+        Guid? authorId = null,
+        int page = 1,
+        int pageSize = 25)
     {
         IQueryable<ShoppingListEntity> query = _shoppingListRepository.GetAll();
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
             var normalizedSearchQuery = searchQuery.ToLowerInvariant();
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
-            
-            query = query.Where(list =>  
-                list.Name.Contains(searchQuery, comparison) ||
-                (list.Description != null && list.Description.Contains(searchQuery, comparison)) ||
-                list.Shop.Contains(searchQuery, comparison));
+
+            query = query.Where(list =>
+                list.Name.ToLower().Contains(normalizedSearchQuery) ||
+                (list.Description != null && list.Description.ToLower().Contains(normalizedSearchQuery)) ||
+                list.Shop.ToLower().Contains(normalizedSearchQuery));
         }
 
         if (authorId.HasValue)
@@ -36,8 +36,11 @@ public class ShoppingListFacade(IShoppingListRepository shoppingListRepository, 
             query = query.Where(list => list.AuthorId == authorId.Value);
         }
 
-        query = ascending ? query.OrderBy(list => list.Name) : query.OrderByDescending(list => list.Name);
-        
+        var orderedQuery = ascending ? query.OrderBy(list => list.Name) : query.OrderByDescending(list => list.Name);
+        query = orderedQuery.ThenBy(list => list.Id);
+
+        query = query.Skip((page - 1) * pageSize).Take(pageSize);
+
         IEnumerable<ShoppingListEntity> entities = query.ToList();
         return _mapper.ToListModels(entities);
     }

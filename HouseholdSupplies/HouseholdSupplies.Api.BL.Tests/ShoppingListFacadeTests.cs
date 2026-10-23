@@ -297,6 +297,48 @@ public class ShoppingListFacadeTests
         Assert.Equal(new[] { second.Id, first.Id }, results.Select(entity => entity.Id));
     }
 
+    [Theory]
+    [InlineData(1, 2, new[] { "Alpha", "Beta" })]
+    [InlineData(2, 2, new[] { "Delta", "Gamma" })]
+    [InlineData(3, 2, new[] { "Omega" })]
+    [InlineData(4, 2, new string[0])]
+    public void GetAll_Returns_Requested_Page(int page, int pageSize, string[] expected)
+    {
+        SetupEntities(CreateEntity("Omega"), CreateEntity("Beta"), CreateEntity("Gamma"),
+            CreateEntity("Alpha"), CreateEntity("Delta"));
+
+        var results = facade.GetAll(page: page, pageSize: pageSize).ToList();
+
+        Assert.Equal(expected, results.Select(entity => entity.Name));
+    }
+
+    [Fact]
+    public void GetAll_Default_Page_Returns_First_25_Entities_In_Name_Order()
+    {
+        var entities = Enumerable.Range(1, 30).Select(index => CreateEntity($"List {index:D2}")).ToArray();
+        SetupEntities(entities.Reverse().ToArray());
+
+        var results = facade.GetAll().ToList();
+
+        Assert.Equal(entities.Take(25).Select(entity => entity.Id), results.Select(entity => entity.Id));
+    }
+
+    [Fact]
+    public void GetAll_Applies_Search_Author_And_Descending_Order_Before_Paging()
+    {
+        var first = CreateEntity("Alpha match");
+        var second = CreateEntity("Beta match") with { AuthorId = first.AuthorId, Author = first.Author };
+        var third = CreateEntity("Gamma match") with { AuthorId = first.AuthorId, Author = first.Author };
+        var wrongAuthor = CreateEntity("Delta match");
+        var wrongSearch = first with { Id = Guid.NewGuid(), Name = "Omega" };
+        SetupEntities(wrongAuthor, first, wrongSearch, second, third);
+
+        var result = Assert.Single(facade.GetAll(searchQuery: "match", authorId: first.AuthorId,
+            ascending: false, page: 2, pageSize: 1));
+
+        Assert.Equal(second.Id, result.Id);
+    }
+
     private static ShoppingListEntity CreateEntity(string name = "Weekly shopping")
     {
         var author = FacadeTestData.CreateUser();

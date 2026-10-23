@@ -8,8 +8,9 @@ public interface IShoppingListFacade : IAppFacade
     IEnumerable<ShoppingListListModel> GetAll(
         string? searchQuery = null,
         bool ascending = true,
-        Guid? authorId = null
-        );
+        Guid? authorId = null,
+        int page = 1,
+        int pageSize = 25);
     ShoppingListDetailModel? GetById(Guid id);
     Guid CreateOrUpdate(ShoppingListDetailModel model, IList<string> userRoles, string? ownerId = null);
     Guid Create(ShoppingListDetailModel shoppingListModel, IList<string> userRoles, string? ownerId = null);
