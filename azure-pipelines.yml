@@ -145,5 +145,6 @@ steps:
     azureSubscription: $(webAppServiceConnection)
     appType: webApp
     appName: $(webAppName)
-    package: $(Build.ArtifactStagingDirectory)/api.zip
+    # With modifyOutputPath: false, DotNetCoreCLI places the ZIP inside the output folder.
+    package: $(Build.ArtifactStagingDirectory)/api/api.zip
     deploymentMethod: zipDeploy
