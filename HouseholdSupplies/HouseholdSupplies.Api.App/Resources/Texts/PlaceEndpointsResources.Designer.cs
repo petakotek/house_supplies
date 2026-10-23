@@ -60,29 +60,29 @@ namespace HouseholdSupplies.Api.App.Resources.Texts {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Place with id &apos;{0}&apos; was not found.
+        ///   Looks up a localized string similar to You do not have permission to modify this place..
         /// </summary>
-        internal static string GetById_NotFound {
+        internal static string Forbidden_Detail {
             get {
-                return ResourceManager.GetString("GetById_NotFound", resourceCulture);
+                return ResourceManager.GetString("Forbidden_Detail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are not allowed to create/update place with id &apos;{0}&apos;.
+        ///   Looks up a localized string similar to Operation forbidden.
         /// </summary>
-        internal static string Upsert_Forbidden_Detail {
+        internal static string Forbidden_Title {
             get {
-                return ResourceManager.GetString("Upsert_Forbidden_Detail", resourceCulture);
+                return ResourceManager.GetString("Forbidden_Title", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Forbidden.
+        ///   Looks up a localized string similar to Page and pageSize must be positive and their offset must be within integer range..
         /// </summary>
-        internal static string Upsert_Forbidden_Title {
+        internal static string Paging {
             get {
-                return ResourceManager.GetString("Upsert_Forbidden_Title", resourceCulture);
+                return ResourceManager.GetString("Paging", resourceCulture);
             }
         }
     }

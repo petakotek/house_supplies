@@ -11,13 +11,13 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="GetById_NotFound" xml:space="preserve">
-        <value>Nákupní seznam s id '{0}' nebyl nalezen</value>
+    <data name="Paging" xml:space="preserve">
+        <value>Page a pageSize musí být kladné a v rozsahu integeru.</value>
     </data>
-    <data name="Upsert_Forbidden_Detail" xml:space="preserve">
-        <value>Nemáte oprávnění na přidání/editaci nákupního seznamu s id '{0}'</value>
+    <data name="Forbidden_Title" xml:space="preserve">
+        <value>Operace není povolena</value>
     </data>
-    <data name="Upsert_Forbidden_Title" xml:space="preserve">
-        <value>Nemáte oprávnění</value>
+    <data name="Forbidden_Detail" xml:space="preserve">
+        <value>Nemáte oprávnění upravovat tento nákupní seznam.</value>
     </data>
 </root>

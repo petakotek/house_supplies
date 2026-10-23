@@ -17,6 +17,18 @@ public sealed partial class EndpointTests
     [InlineData("/api/user", "post", "Guid", "200,400,409,422")]
     [InlineData("/api/user", "put", "Guid", "200,400,404,409,422")]
     [InlineData("/api/user/{id}", "delete", "Empty", "200,404,409")]
+    [InlineData("/api/place", "get", "PlaceListModel[]", "200,400")]
+    [InlineData("/api/place/{id}", "get", "PlaceDetailModel", "200,404")]
+    [InlineData("/api/place", "post", "Guid", "200,400,409,422")]
+    [InlineData("/api/place", "put", "Guid", "200,400,403,404,409,422")]
+    [InlineData("/api/place/save", "post", "Guid", "200,400,403,409,422")]
+    [InlineData("/api/place/{id}", "delete", "Empty", "200,403,404,409")]
+    [InlineData("/api/shopping-list", "get", "ShoppingListListModel[]", "200,400")]
+    [InlineData("/api/shopping-list/{id}", "get", "ShoppingListDetailModel", "200,404")]
+    [InlineData("/api/shopping-list", "post", "Guid", "200,400,409,422")]
+    [InlineData("/api/shopping-list", "put", "Guid", "200,400,403,404,409,422")]
+    [InlineData("/api/shopping-list/save", "post", "Guid", "200,400,403,409,422")]
+    [InlineData("/api/shopping-list/{id}", "delete", "Empty", "200,403,404,409")]
     public async Task OpenApi_DescribesActualResponses(string path, string method, string resultType, string statuses)
     {
         // Inspect the document clients actually download, rather than endpoint metadata alone.
@@ -57,8 +69,9 @@ public sealed partial class EndpointTests
         foreach (var response in responses.EnumerateObject().Where(response => response.Name != "200"))
         {
             var status = response.Name;
-            if (status is "403" or "409" or "422" || (status == "400" && path == "/api/item" && method is "post" or "put")
-                || (status == "400" && path == "/api/item/save"))
+            if (status is "403" or "409" or "422"
+                || (status == "400" && path is "/api/item" or "/api/place" or "/api/shopping-list" && method is "post" or "put")
+                || (status == "400" && path.EndsWith("/save")))
             {
                 var schema = response.Value.GetProperty("content").GetProperty("application/problem+json").GetProperty("schema");
                 Assert.True(HasProperty(root, schema, "status"));
