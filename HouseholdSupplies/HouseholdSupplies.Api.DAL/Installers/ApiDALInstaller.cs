@@ -10,7 +10,7 @@ public class ApiDALInstaller : ApiDALInstallerBase
     {
         base.Install(serviceCollection);
 
-        serviceCollection.AddDbContext<HouseholdSuppliesDbContext>(options => options.UseSqlite(connectionString));
+        serviceCollection.AddDbContext<HouseholdSuppliesDbContext>(options => options.UseAzureSql(connectionString));
         
         serviceCollection.Scan(selector =>
             selector.FromAssemblyOf<ApiDALInstaller>()
