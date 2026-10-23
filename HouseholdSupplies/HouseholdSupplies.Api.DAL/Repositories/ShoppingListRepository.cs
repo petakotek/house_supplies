@@ -1,0 +1,41 @@
+using HouseholdSupplies.Api.DAL.Entities;
+using HouseholdSupplies.Api.DAL.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace HouseholdSupplies.Api.DAL.Repositories;
+
+public class ShoppingListRepository : RepositoryBase<ShoppingListEntity>, IShoppingListRepository
+{
+    public ShoppingListRepository(HouseholdSuppliesDbContext dbContext) : base(dbContext)
+    {
+    }
+    
+    public override ShoppingListEntity? GetById(Guid id)
+    {
+        return dbContext.ShoppingLists
+            .Include(list => list.Author)
+            .Include(list => list.Items)
+            .ThenInclude(entry => entry.Item)
+            .ThenInclude(item => item!.Place)
+            .SingleOrDefault(list => list.Id == id);
+    }
+    
+    public override Guid? Update(ShoppingListEntity updated)
+    {
+        var existing = dbContext.ShoppingLists
+            .SingleOrDefault(list => list.Id == updated.Id);
+
+        if (existing is null)
+        {
+            return null;
+        }
+
+        existing.Name = updated.Name;
+        existing.Shop = updated.Shop;
+        existing.Description = updated.Description;
+
+        dbContext.SaveChanges();
+
+        return existing.Id;
+    }
+}

@@ -1,0 +1,134 @@
+trigger:
+  branches:
+    include:
+      - 'main'
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  buildConfiguration: Release
+  efCoreVersion: '10.0.12'
+
+  solution: HouseholdSupplies/HouseholdSupplies.slnx
+  apiProject: HouseholdSupplies/HouseholdSupplies.Api.App/HouseholdSupplies.Api.App.csproj
+
+  migrationsProject: HouseholdSupplies/HouseholdSupplies.Api.DAL/HouseholdSupplies.Api.DAL.csproj
+  migrationsStartupProject: HouseholdSupplies/HouseholdSupplies.Api.DAL/HouseholdSupplies.Api.DAL.csproj
+
+  azureServiceConnection: azure-api-connection
+  webAppName: app-iw5-2026-team-xpollal00-api
+  sqlServerName: sqldb-iw5-2026-team-xpollal00.database.windows.net
+  sqlDatabaseName: xpollal00
+
+steps:
+- checkout: self
+
+- task: UseDotNet@2
+  displayName: Install .NET 10 SDK
+  inputs:
+    packageType: sdk
+    version: 10.0.x
+
+- task: DotNetCoreCLI@2
+  displayName: Restore dependencies
+  inputs:
+    command: restore
+    projects: $(solution)
+
+- task: DotNetCoreCLI@2
+  displayName: Build solution
+  inputs:
+    command: build
+    projects: $(solution)
+    arguments: >
+      --configuration $(buildConfiguration)
+      --no-restore
+
+- task: DotNetCoreCLI@2
+  displayName: Run tests
+  inputs:
+    command: test
+    projects: $(solution)
+    arguments: >
+      --configuration $(buildConfiguration)
+      --no-build
+      --no-restore
+    publishTestResults: true
+
+- task: DotNetCoreCLI@2
+  displayName: Publish Windows API
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: $(apiProject)
+    arguments: >
+      --configuration $(buildConfiguration)
+      --self-contained false
+      -p:UseAppHost=false
+      --output $(Build.ArtifactStagingDirectory)/api
+    zipAfterPublish: true
+    modifyOutputPath: false
+
+- task: PowerShell@2
+  displayName: Generate Azure SQL migration script
+  inputs:
+    targetType: inline
+    pwsh: true
+    script: |
+      $ErrorActionPreference = 'Stop'
+
+      dotnet tool install dotnet-ef `
+        --tool-path "$(Agent.TempDirectory)/ef-tools" `
+        --version "$(efCoreVersion)"
+
+      if ($LASTEXITCODE -ne 0) {
+          throw "Installing dotnet-ef failed."
+      }
+
+      & "$(Agent.TempDirectory)/ef-tools/dotnet-ef.exe" migrations script `
+        --project "$(migrationsProject)" `
+        --startup-project "$(migrationsStartupProject)" `
+        --context HouseholdSuppliesDbContext `
+        --configuration "$(buildConfiguration)" `
+        --no-build `
+        --idempotent `
+        --output "$(Build.ArtifactStagingDirectory)/migrations.sql"
+
+      if ($LASTEXITCODE -ne 0) {
+          throw "Generating the migration script failed."
+      }
+  env:
+    ConnectionStrings__DefaultConnection: 'Server=localhost;Database=HouseholdSupplies;Integrated Security=True;TrustServerCertificate=True'
+
+- task: PublishPipelineArtifact@1
+  displayName: Store API and migration artifacts
+  inputs:
+    targetPath: $(Build.ArtifactStagingDirectory)
+    artifact: deployment
+
+- task: SqlAzureDacpacDeployment@1
+  displayName: Apply Azure SQL migrations
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  inputs:
+    azureSubscription: $(azureServiceConnection)
+    AuthenticationType: server
+    ServerName: $(sqlServerName)
+    DatabaseName: $(sqlDatabaseName)
+    SqlUsername: $(SqlUsername)
+    SqlPassword: $(SqlPassword)
+    deployType: SqlTask
+    SqlFile: $(Build.ArtifactStagingDirectory)/migrations.sql
+    SqlAdditionalArguments: '-AbortOnError'
+    IpDetectionMethod: AutoDetect
+    DeleteFirewallRule: true
+
+- task: AzureWebApp@1
+  displayName: Deploy API to Windows App Service
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  inputs:
+    azureSubscription: $(azureServiceConnection)
+    appType: webApp
+    appName: $(webAppName)
+    package: $(Build.ArtifactStagingDirectory)/api.zip
+    deploymentMethod: zipDeploy

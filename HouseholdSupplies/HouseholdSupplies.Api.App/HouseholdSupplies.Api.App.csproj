@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.13" />
+    <PackageReference Include="NSwag.AspNetCore" Version="14.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HouseholdSupplies.Api.BL\HouseholdSupplies.Api.BL.csproj" />
+    <ProjectReference Include="..\HouseholdSupplies.Api.DAL\HouseholdSupplies.Api.DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Texts\ItemEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ItemEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Texts\UserEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>UserEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Texts\EntityEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>EntityEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Texts\PlaceEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PlaceEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Texts\ShoppingListEndpointsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ShoppingListEndpointsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Texts\ItemEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ItemEndpointsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Texts\UserEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UserEndpointsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Texts\EntityEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EntityEndpointsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Texts\PlaceEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PlaceEndpointsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Texts\ShoppingListEndpointsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ShoppingListEndpointsResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
