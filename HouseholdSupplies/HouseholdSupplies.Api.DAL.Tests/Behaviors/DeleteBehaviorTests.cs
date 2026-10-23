@@ -67,7 +67,9 @@ public sealed class DeleteBehaviorTests(DbContextFixture fixture) : DalTestBase(
         var exception = Record.Exception(() => repository.Remove(graph.Place.Id));
 
         // Assert
-        Assert.IsType<InvalidOperationException>(exception);
+        var updateException = Assert.IsType<DbUpdateException>(exception);
+        var sqliteException = Assert.IsType<SqliteException>(updateException.InnerException);
+        Assert.Equal(19, sqliteException.SqliteErrorCode);
         Assert.Equal(graph.Place.Id, Assert.Single(context.Places.ToList()).Id);
         Assert.Equal(graph.Item.Id, Assert.Single(context.Items.ToList()).Id);
     }
